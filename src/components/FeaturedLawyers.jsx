@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { FaStar, FaStarHalfAlt, FaRegStar, FaChevronLeft, FaChevronRight, FaMapMarkerAlt, FaCheckCircle } from 'react-icons/fa';
+import React, { useRef, useState, useEffect } from 'react';
+import { FaStar, FaChevronLeft, FaChevronRight, FaMapMarkerAlt, FaCheckCircle } from 'react-icons/fa';
 import './FeaturedLawyers.css';
 
 const lawyers = [
@@ -95,12 +95,65 @@ const StarRating = ({ count = 5 }) => (
 );
 
 const FeaturedLawyers = () => {
-    const [scrollIndex, setScrollIndex] = useState(0);
-    const visibleCards = 3;
-    const maxIndex = Math.max(0, lawyers.length - visibleCards);
+    const trackRef = useRef(null);
+    const [canScrollLeft, setCanScrollLeft] = useState(false);
+    const [canScrollRight, setCanScrollRight] = useState(true);
 
-    const handlePrev = () => setScrollIndex(Math.max(0, scrollIndex - 1));
-    const handleNext = () => setScrollIndex(Math.min(maxIndex, scrollIndex + 1));
+    // Drag-to-scroll state
+    const isDragging = useRef(false);
+    const startX = useRef(0);
+    const scrollLeftStart = useRef(0);
+
+    const updateScrollButtons = () => {
+        const el = trackRef.current;
+        if (!el) return;
+        setCanScrollLeft(el.scrollLeft > 5);
+        setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 5);
+    };
+
+    useEffect(() => {
+        const el = trackRef.current;
+        if (!el) return;
+        updateScrollButtons();
+        el.addEventListener('scroll', updateScrollButtons, { passive: true });
+        window.addEventListener('resize', updateScrollButtons);
+        return () => {
+            el.removeEventListener('scroll', updateScrollButtons);
+            window.removeEventListener('resize', updateScrollButtons);
+        };
+    }, []);
+
+    const scrollBy = (direction) => {
+        const el = trackRef.current;
+        if (!el) return;
+        const cardWidth = el.querySelector('.lawyer-card')?.offsetWidth || 350;
+        const gap = 24;
+        el.scrollBy({ left: direction * (cardWidth + gap), behavior: 'smooth' });
+    };
+
+    // Drag-to-scroll handlers
+    const handleMouseDown = (e) => {
+        isDragging.current = true;
+        startX.current = e.pageX;
+        scrollLeftStart.current = trackRef.current.scrollLeft;
+        trackRef.current.style.cursor = 'grabbing';
+        trackRef.current.style.scrollSnapType = 'none';
+    };
+
+    const handleMouseMove = (e) => {
+        if (!isDragging.current) return;
+        e.preventDefault();
+        const dx = e.pageX - startX.current;
+        trackRef.current.scrollLeft = scrollLeftStart.current - dx;
+    };
+
+    const handleMouseUp = () => {
+        isDragging.current = false;
+        if (trackRef.current) {
+            trackRef.current.style.cursor = 'grab';
+            trackRef.current.style.scrollSnapType = 'x mandatory';
+        }
+    };
 
     return (
         <section className="featured-lawyers section" id="lawyers">
@@ -109,22 +162,22 @@ const FeaturedLawyers = () => {
                     <div>
                         <h2 className="section-title">Featured Attorneys</h2>
                         <p className="section-subtitle">
-                            Top-rated lawyers ready to help with your legal needs.
+                            Top-rated lawyers ready to help with your legal needs. Scroll to explore →
                         </p>
                     </div>
                     <div className="featured-lawyers__nav">
                         <button
                             className="featured-lawyers__nav-btn"
-                            onClick={handlePrev}
-                            disabled={scrollIndex === 0}
+                            onClick={() => scrollBy(-1)}
+                            disabled={!canScrollLeft}
                             aria-label="Previous"
                         >
                             <FaChevronLeft />
                         </button>
                         <button
                             className="featured-lawyers__nav-btn"
-                            onClick={handleNext}
-                            disabled={scrollIndex >= maxIndex}
+                            onClick={() => scrollBy(1)}
+                            disabled={!canScrollRight}
                             aria-label="Next"
                         >
                             <FaChevronRight />
@@ -132,47 +185,56 @@ const FeaturedLawyers = () => {
                     </div>
                 </div>
 
-                <div className="featured-lawyers__track-wrapper">
-                    <div
-                        className="featured-lawyers__track"
-                        style={{ transform: `translateX(-${scrollIndex * (100 / visibleCards)}%)` }}
-                    >
-                        {lawyers.map((lawyer, index) => (
-                            <div key={index} className="lawyer-card">
-                                <div className="lawyer-card__top">
-                                    <div className="lawyer-card__avatar" style={{ background: `linear-gradient(135deg, ${lawyer.color}, ${lawyer.color}cc)` }}>
-                                        {lawyer.initials}
-                                    </div>
-                                    <RatingBadge rating={lawyer.rating} />
+                <div
+                    className="featured-lawyers__track"
+                    ref={trackRef}
+                    onMouseDown={handleMouseDown}
+                    onMouseMove={handleMouseMove}
+                    onMouseUp={handleMouseUp}
+                    onMouseLeave={handleMouseUp}
+                >
+                    {lawyers.map((lawyer, index) => (
+                        <div key={index} className="lawyer-card">
+                            <div className="lawyer-card__top">
+                                <div className="lawyer-card__avatar" style={{ background: `linear-gradient(135deg, ${lawyer.color}, ${lawyer.color}cc)` }}>
+                                    {lawyer.initials}
                                 </div>
-
-                                <div className="lawyer-card__info">
-                                    <h3 className="lawyer-card__name">
-                                        {lawyer.name}
-                                        {lawyer.verified && <FaCheckCircle className="lawyer-card__verified" />}
-                                    </h3>
-                                    <p className="lawyer-card__specialty">{lawyer.specialty}</p>
-                                    <p className="lawyer-card__location">
-                                        <FaMapMarkerAlt />
-                                        {lawyer.location}
-                                    </p>
-                                </div>
-
-                                <div className="lawyer-card__meta">
-                                    <div className="lawyer-card__reviews">
-                                        <StarRating />
-                                        <span>{lawyer.reviews} reviews</span>
-                                    </div>
-                                    <span className="lawyer-card__experience">{lawyer.experience} exp.</span>
-                                </div>
-
-                                <div className="lawyer-card__actions">
-                                    <button className="btn btn-primary" style={{ flex: 1 }}>View Profile</button>
-                                    <button className="btn btn-secondary" style={{ flex: 1 }}>Contact</button>
-                                </div>
+                                <RatingBadge rating={lawyer.rating} />
                             </div>
-                        ))}
-                    </div>
+
+                            <div className="lawyer-card__info">
+                                <h3 className="lawyer-card__name">
+                                    {lawyer.name}
+                                    {lawyer.verified && <FaCheckCircle className="lawyer-card__verified" />}
+                                </h3>
+                                <p className="lawyer-card__specialty">{lawyer.specialty}</p>
+                                <p className="lawyer-card__location">
+                                    <FaMapMarkerAlt />
+                                    {lawyer.location}
+                                </p>
+                            </div>
+
+                            <div className="lawyer-card__meta">
+                                <div className="lawyer-card__reviews">
+                                    <StarRating />
+                                    <span>{lawyer.reviews} reviews</span>
+                                </div>
+                                <span className="lawyer-card__experience">{lawyer.experience} exp.</span>
+                            </div>
+
+                            <div className="lawyer-card__actions">
+                                <button className="btn btn-primary" style={{ flex: 1 }}>View Profile</button>
+                                <button className="btn btn-secondary" style={{ flex: 1 }}>Contact</button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Scroll indicator dots */}
+                <div className="featured-lawyers__dots">
+                    {lawyers.map((_, i) => (
+                        <span key={i} className="featured-lawyers__dot"></span>
+                    ))}
                 </div>
             </div>
         </section>

@@ -39,23 +39,52 @@
     cursor: not-allowed;
 }
 
-.featured-lawyers__track-wrapper {
-    overflow: hidden;
-}
-
+/* Scrollable track */
 .featured-lawyers__track {
     display: flex;
     gap: var(--space-lg);
-    transition: transform var(--transition-slow);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    cursor: grab;
+    padding-bottom: var(--space-md);
+
+    /* Custom scrollbar */
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-gray-300) transparent;
 }
 
+.featured-lawyers__track::-webkit-scrollbar {
+    height: 6px;
+}
+
+.featured-lawyers__track::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 10px;
+}
+
+.featured-lawyers__track::-webkit-scrollbar-thumb {
+    background: var(--color-gray-300);
+    border-radius: 10px;
+    transition: background var(--transition-fast);
+}
+
+.featured-lawyers__track::-webkit-scrollbar-thumb:hover {
+    background: var(--color-gray-400);
+}
+
+/* Cards */
 .lawyer-card {
-    flex: 0 0 calc(33.333% - var(--space-lg) * 2 / 3);
+    flex: 0 0 340px;
+    min-width: 300px;
     background: var(--color-white);
     border-radius: var(--border-radius-lg);
     border: 1px solid var(--color-gray-200);
     padding: var(--space-xl);
     transition: all var(--transition-base);
+    scroll-snap-align: start;
+    user-select: none;
 }
 
 .lawyer-card:hover {
@@ -178,10 +207,20 @@
     padding: 0.6rem 1rem;
 }
 
-@media (max-width: 1024px) {
-    .lawyer-card {
-        flex: 0 0 calc(50% - var(--space-lg) / 2);
-    }
+/* Scroll indicator dots */
+.featured-lawyers__dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: var(--space-lg);
+}
+
+.featured-lawyers__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--border-radius-full);
+    background: var(--color-gray-300);
+    transition: all var(--transition-fast);
 }
 
 @media (max-width: 768px) {
@@ -192,6 +231,7 @@
     }
 
     .lawyer-card {
-        flex: 0 0 85%;
+        flex: 0 0 280px;
+        min-width: 260px;
     }
 }

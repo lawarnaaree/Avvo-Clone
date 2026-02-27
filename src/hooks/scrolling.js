@@ -1,16 +1,7 @@
-import Lenis from 'lenis'
+import { scrollTo, scrollIntoView } from 'scroll-js';
 
-// Initialize a new Lenis instance for smooth scrolling
-const lenis = new Lenis();
+import { scrollTo } from 'scroll-js';
 
-// Synchronize Lenis scrolling with GSAP's ScrollTrigger plugin
-lenis.on('scroll', ScrollTrigger.update);
-
-// Add Lenis's requestAnimationFrame (raf) method to GSAP's ticker
-// This ensures Lenis's smooth scroll animation updates on each GSAP tick
-gsap.ticker.add((time) => {
-    lenis.raf(time * 1000); // Convert time from seconds to milliseconds
+scrollTo(window, { top: 500 }).then(function () {
+    // window has scrolled 500 pixels down the page
 });
-
-// Disable lag smoothing in GSAP to prevent any delay in scroll animations
-gsap.ticker.lagSmoothing(0);
