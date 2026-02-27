@@ -5,7 +5,7 @@ import './ReviewsSection.css';
 const reviews = [
     {
         name: 'Amanda T.',
-        location: 'San Diego, CA',
+        location: 'Kathmandu, Bagmati',
         rating: 5,
         text: 'I was terrified about my custody case, but the attorney I found through Avvo was incredible. She guided me through every step and we got a great outcome. I can\'t recommend this platform enough!',
         type: 'Family Law',
@@ -13,7 +13,7 @@ const reviews = [
     },
     {
         name: 'Marcus J.',
-        location: 'Austin, TX',
+        location: 'Bhaktapur, Bagmati',
         rating: 5,
         text: 'After being charged with a DUI, I didn\'t know where to turn. Avvo connected me with an amazing defense attorney who got my charges reduced. The rating system made it easy to choose.',
         type: 'DUI Defense',
@@ -21,7 +21,7 @@ const reviews = [
     },
     {
         name: 'Rachel K.',
-        location: 'Denver, CO',
+        location: 'Pokhara, Gandaki',
         rating: 5,
         text: 'The free Q&A section helped me understand my rights as a tenant before I even hired a lawyer. When I did need one, I found the perfect real estate attorney in minutes.',
         type: 'Real Estate',
@@ -29,7 +29,7 @@ const reviews = [
     },
     {
         name: 'David P.',
-        location: 'Miami, FL',
+        location: 'Lalitpur, Bagmati',
         rating: 5,
         text: 'Starting my business was stressful enough without worrying about legal issues. My Avvo-recommended business attorney made the LLC formation process seamless and affordable.',
         type: 'Business Law',

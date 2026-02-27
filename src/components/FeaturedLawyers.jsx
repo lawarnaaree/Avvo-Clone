@@ -6,7 +6,7 @@ const lawyers = [
     {
         name: 'Sarah J. Mitchell',
         specialty: 'Family Law Attorney',
-        location: 'New York, NY',
+        location: 'Kathmandu, Bagmati',
         rating: 10,
         reviews: 127,
         experience: '15 years',
@@ -17,7 +17,7 @@ const lawyers = [
     {
         name: 'David R. Thompson',
         specialty: 'Criminal Defense Lawyer',
-        location: 'Los Angeles, CA',
+        location: 'Pokhara, Gandaki',
         rating: 9.8,
         reviews: 94,
         experience: '20 years',
@@ -28,7 +28,7 @@ const lawyers = [
     {
         name: 'Jennifer K. Lee',
         specialty: 'Personal Injury Attorney',
-        location: 'Chicago, IL',
+        location: 'Lalitpur, Bagmati',
         rating: 9.5,
         reviews: 203,
         experience: '12 years',
@@ -39,7 +39,7 @@ const lawyers = [
     {
         name: 'Michael A. Rodriguez',
         specialty: 'Immigration Lawyer',
-        location: 'Houston, TX',
+        location: 'Bharatpur, Chitwan',
         rating: 9.7,
         reviews: 156,
         experience: '18 years',
@@ -50,7 +50,7 @@ const lawyers = [
     {
         name: 'Emily S. Watson',
         specialty: 'Bankruptcy Attorney',
-        location: 'Phoenix, AZ',
+        location: 'Biratnagar, Koshi',
         rating: 9.3,
         reviews: 88,
         experience: '10 years',
@@ -61,7 +61,7 @@ const lawyers = [
     {
         name: 'Robert C. Davis',
         specialty: 'Business Law Attorney',
-        location: 'Philadelphia, PA',
+        location: 'Butwal, Lumbini',
         rating: 9.9,
         reviews: 171,
         experience: '22 years',

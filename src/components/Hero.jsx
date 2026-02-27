@@ -53,7 +53,7 @@ const Hero = () => {
                             <FiMapPin className="hero__search-icon" />
                             <input
                                 type="text"
-                                placeholder="City, State, or Zip"
+                                placeholder="e.g. Kathmandu, Pokhara, Lalitpur"
                                 value={location}
                                 onChange={(e) => setLocation(e.target.value)}
                                 className="hero__search-input"
