@@ -1,0 +1,253 @@
+.ask-lawyer-page {
+    padding-top: 120px;
+    padding-bottom: 100px;
+    background: linear-gradient(135deg, #f8faff 0%, #ffffff 100%);
+    min-height: 100vh;
+}
+
+.ask-lawyer-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+}
+
+.ask-lawyer__info {
+    position: sticky;
+    top: 140px;
+}
+
+.ask-lawyer__badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    border-radius: var(--border-radius-full);
+    font-weight: 600;
+    font-size: var(--font-size-sm);
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.ask-lawyer__title {
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(to right, var(--color-black), var(--color-primary-dark));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.ask-lawyer__description {
+    font-size: var(--font-size-lg);
+    color: var(--color-gray-600);
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+}
+
+.ask-lawyer__benefits {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.benefit-item__icon {
+    width: 48px;
+    height: 48px;
+    background: var(--color-white);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary);
+    font-size: 1.5rem;
+    box-shadow: 0 4px 12px rgba(26, 115, 232, 0.1);
+}
+
+.benefit-item__text {
+    font-weight: 600;
+    color: var(--color-gray-800);
+}
+
+/* Form Styles */
+.ask-lawyer__card {
+    background: var(--color-white);
+    padding: 3rem;
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.03);
+    position: relative;
+    overflow: hidden;
+}
+
+.ask-lawyer__card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 6px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-primary-dark));
+}
+
+.auth-warning {
+    padding: 1.25rem;
+    background: #fff9db;
+    border-left: 4px solid #fcc419;
+    border-radius: 8px;
+    margin-bottom: 2.5rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    color: #856404;
+    font-size: 0.95rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--color-gray-800);
+    font-size: 0.95rem;
+}
+
+.form-select {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--color-gray-200);
+    border-radius: 12px;
+    background: #fbfcfe;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-textarea {
+    width: 100%;
+    padding: 1.25rem;
+    border: 1px solid var(--color-gray-200);
+    border-radius: 12px;
+    background: #fbfcfe;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    font-family: var(--font-family);
+    color: var(--color-gray-800);
+    resize: vertical;
+    transition: all 0.3s ease;
+}
+
+.form-textarea::placeholder {
+    color: var(--color-gray-400);
+    font-style: italic;
+    font-size: 0.95rem;
+}
+
+.form-select:focus,
+.form-textarea:focus {
+    border-color: var(--color-primary);
+    background: var(--color-white);
+    box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.1);
+}
+
+.error-message {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--color-danger);
+    font-size: 0.9rem;
+    margin-top: 10px;
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 1.1rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-top: 1rem;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    color: white;
+    box-shadow: 0 8px 20px rgba(26, 115, 232, 0.2);
+}
+
+.btn-submit:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    background: var(--color-gray-400);
+    box-shadow: none;
+}
+
+.form-tip {
+    margin-top: 1.5rem;
+    font-size: 0.85rem;
+    color: var(--color-gray-500);
+    text-align: center;
+}
+
+/* Success State */
+.success-page {
+    padding-top: 150px;
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.success-icon-wrapper {
+    width: 100px;
+    height: 100px;
+    background: #ebfbee;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 2.5rem;
+    color: #40c057;
+    font-size: 3.5rem;
+    animation: successScale 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes successScale {
+    from {
+        transform: scale(0);
+    }
+
+    to {
+        transform: scale(1);
+    }
+}
+
+@media (max-width: 1024px) {
+    .ask-lawyer-container {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
+
+    .ask-lawyer__info {
+        position: static;
+        text-align: center;
+    }
+
+    .ask-lawyer__description {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .ask-lawyer__benefits {
+        align-items: center;
+    }
+
+    .ask-lawyer__card {
+        padding: 2rem;
+    }
+}
