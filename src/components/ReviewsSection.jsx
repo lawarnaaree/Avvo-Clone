@@ -1,43 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaStar, FaQuoteLeft } from 'react-icons/fa';
+import { reviewService } from '../services/reviewService';
 import './ReviewsSection.css';
 
-const reviews = [
-    {
-        name: 'Lawarna Aree',
-        location: 'Kathmandu, Bagmati',
-        rating: 5,
-        text: 'I was terrified about my custody case, but the attorney I found through Find Lawyer Nepal was incredible. She guided me through every step and we got a great outcome. I can\'t recommend this platform enough!',
-        type: 'Family Law',
-        color: '#e91e63',
-    },
-    {
-        name: 'Lawarna Aree',
-        location: 'Bhaktapur, Bagmati',
-        rating: 5,
-        text: 'After being charged with a DUI, I didn\'t know where to turn. Find Lawyer Nepal connected me with an amazing defense attorney who got my charges reduced. The rating system made it easy to choose.',
-        type: 'DUI Defense',
-        color: '#9c27b0',
-    },
-    {
-        name: 'Lawarna Aree',
-        location: 'Pokhara, Gandaki',
-        rating: 5,
-        text: 'The free Q&A section helped me understand my rights as a tenant before I even hired a lawyer. When I did need one, I found the perfect real estate attorney in minutes.',
-        type: 'Real Estate',
-        color: '#4caf50',
-    },
-    {
-        name: 'Lawarna Aree',
-        location: 'Lalitpur, Bagmati',
-        rating: 5,
-        text: 'Starting my business was stressful enough without worrying about legal issues. My Find Lawyer Nepal-recommended business attorney made the LLC formation process seamless and affordable.',
-        type: 'Business Law',
-        color: '#2196f3',
-    },
-];
-
 const ReviewsSection = () => {
+    const [reviews, setReviews] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchReviews = async () => {
+            setLoading(true);
+            const data = await reviewService.getAllReviews();
+            setReviews(data);
+            setLoading(false);
+        };
+        fetchReviews();
+    }, []);
+
     return (
         <section className="reviews-section section">
             <div className="container">
@@ -49,29 +28,39 @@ const ReviewsSection = () => {
                 </div>
 
                 <div className="reviews-section__grid">
-                    {reviews.map((review, index) => (
-                        <div key={index} className="review-card" style={{ animationDelay: `${index * 0.1}s` }}>
-                            <FaQuoteLeft className="review-card__quote-icon" />
-                            <div className="stars review-card__stars">
-                                {[...Array(review.rating)].map((_, i) => (
-                                    <FaStar key={i} />
-                                ))}
-                            </div>
-                            <p className="review-card__text">{review.text}</p>
-                            <div className="review-card__author">
-                                <div className="review-card__avatar" style={{ background: review.color }}>
-                                    {review.name.charAt(0)}
-                                </div>
-                                <div>
-                                    <span className="review-card__name">{review.name}</span>
-                                    <span className="review-card__location">{review.location}</span>
-                                </div>
-                                <span className="review-card__type" style={{ background: `${review.color}15`, color: review.color }}>
-                                    {review.type}
-                                </span>
-                            </div>
+                    {loading ? (
+                        <div style={{ textAlign: 'center', gridColumn: '1 / -1', padding: '40px' }}>
+                            <h3>Loading reviews...</h3>
                         </div>
-                    ))}
+                    ) : reviews.length > 0 ? (
+                        reviews.map((review, index) => (
+                            <div key={review.id || index} className="review-card" style={{ animationDelay: `${index * 0.1}s` }}>
+                                <FaQuoteLeft className="review-card__quote-icon" />
+                                <div className="stars review-card__stars">
+                                    {[...Array(review.rating)].map((_, i) => (
+                                        <FaStar key={i} />
+                                    ))}
+                                </div>
+                                <p className="review-card__text">{review.text}</p>
+                                <div className="review-card__author">
+                                    <div className="review-card__avatar" style={{ background: review.color }}>
+                                        {review.name.charAt(0)}
+                                    </div>
+                                    <div>
+                                        <span className="review-card__name">{review.name}</span>
+                                        <span className="review-card__location">{review.location}</span>
+                                    </div>
+                                    <span className="review-card__type" style={{ background: `${review.color}15`, color: review.color }}>
+                                        {review.type}
+                                    </span>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <div style={{ textAlign: 'center', gridColumn: '1 / -1', padding: '40px' }}>
+                            <p>No reviews yet.</p>
+                        </div>
+                    )}
                 </div>
             </div>
         </section>

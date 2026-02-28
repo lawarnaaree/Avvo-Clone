@@ -38,7 +38,7 @@ const App = () => {
 
   return (
     <AuthProvider>
-      <Router>
+      <Router basename="/find-lawyer-nepal/">
         <ScrollToTop />
         <Navbar />
         <Routes>

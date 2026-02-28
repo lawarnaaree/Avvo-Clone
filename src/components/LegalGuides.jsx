@@ -1,54 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FiArrowRight, FiClock, FiBookOpen } from 'react-icons/fi';
+import { guideService } from '../services/guideService';
 import './LegalGuides.css';
 
-const guides = [
-    {
-        category: 'Family Law',
-        title: 'Complete Guide to Divorce in Nepal: Laws, Process, and Costs',
-        excerpt: 'A comprehensive overview of the divorce process in Nepal, including filing requirements under the Muluki Civil Code, property division, and child custody.',
-        readTime: '12 min read',
-        color: '#e91e63',
-    },
-    {
-        category: 'Criminal Law',
-        title: 'Understanding Your Rights if You\'re Arrested: A Step-by-Step Guide',
-        excerpt: 'Know your constitutional rights during an arrest, from Miranda warnings to the right to an attorney, and how to protect yourself.',
-        readTime: '8 min read',
-        color: '#9c27b0',
-    },
-    {
-        category: 'Personal Injury',
-        title: 'What to Do After a Car Accident: A Legal Checklist',
-        excerpt: 'Essential steps to take immediately after a car accident to protect your health, your rights, and your potential insurance claim.',
-        readTime: '6 min read',
-        color: '#ff9800',
-    },
-    {
-        category: 'Property Law',
-        title: 'Buying Land in Nepal: Legal Procedures and Requirements',
-        excerpt: 'A detailed walkthrough of the land purchase process in Nepal, including title verification, registration at the Malpot Office, and tax implications.',
-        readTime: '15 min read',
-        color: '#2196f3',
-    },
-    {
-        category: 'Estate Planning',
-        title: 'Wills vs. Trusts: Which Is Right for You?',
-        excerpt: 'Compare the advantages and disadvantages of wills and trusts to determine the best estate planning strategy for your situation.',
-        readTime: '10 min read',
-        color: '#795548',
-    },
-    {
-        category: 'Business',
-        title: 'LLC vs. Corporation: Choosing the Right Business Structure',
-        excerpt: 'Understand the key differences between LLCs and corporations, including liability protection, taxes, and management flexibility.',
-        readTime: '9 min read',
-        color: '#607d8b',
-    },
-];
-
 const LegalGuides = () => {
+    const [guides, setGuides] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchGuides = async () => {
+            setLoading(true);
+            try {
+                const data = await guideService.getAllGuides();
+                setGuides(data.slice(0, 6)); // Limit to 6 for the home page
+            } catch (err) {
+                console.error("Failed to fetch guides:", err);
+            }
+            setLoading(false);
+        };
+        fetchGuides();
+    }, []);
+
     return (
         <section className="legal-guides section" id="research">
             <div className="container">
@@ -65,24 +38,39 @@ const LegalGuides = () => {
                 </div>
 
                 <div className="legal-guides__grid">
-                    {guides.map((guide, index) => (
-                        <Link to={`/guide/${index + 1}`} key={index} className="guide-card" style={{ animationDelay: `${index * 0.08}s` }}>
-                            <div className="guide-card__category" style={{ color: guide.color }}>
-                                <FiBookOpen />
-                                {guide.category}
-                            </div>
-                            <h3 className="guide-card__title">{guide.title}</h3>
-                            <p className="guide-card__excerpt">{guide.excerpt}</p>
-                            <div className="guide-card__footer">
-                                <span className="guide-card__read-time">
-                                    <FiClock /> {guide.readTime}
-                                </span>
-                                <span className="guide-card__read-more" style={{ color: guide.color }}>
-                                    Read More <FiArrowRight />
-                                </span>
-                            </div>
-                        </Link>
-                    ))}
+                    {loading ? (
+                        <div style={{ textAlign: 'center', width: '100%', padding: '40px', color: 'var(--color-gray-500)' }}>
+                            <h3>Loading legal guides...</h3>
+                        </div>
+                    ) : guides.length > 0 ? (
+                        guides.map((guide, index) => (
+                            <Link
+                                to={`/guide/${guide.id}`}
+                                key={guide.id || index}
+                                className="guide-card"
+                                style={{ animationDelay: `${index * 0.08}s` }}
+                            >
+                                <div className="guide-card__category" style={{ color: guide.color }}>
+                                    <FiBookOpen />
+                                    {guide.category}
+                                </div>
+                                <h3 className="guide-card__title">{guide.title}</h3>
+                                <p className="guide-card__excerpt">{guide.excerpt}</p>
+                                <div className="guide-card__footer">
+                                    <span className="guide-card__read-time">
+                                        <FiClock /> {guide.readTime}
+                                    </span>
+                                    <span className="guide-card__read-more" style={{ color: guide.color }}>
+                                        Read More <FiArrowRight />
+                                    </span>
+                                </div>
+                            </Link>
+                        ))
+                    ) : (
+                        <div style={{ textAlign: 'center', width: '100%', padding: '40px' }}>
+                            <p>No guides found. Try seeding the database!</p>
+                        </div>
+                    )}
                 </div>
             </div>
         </section>

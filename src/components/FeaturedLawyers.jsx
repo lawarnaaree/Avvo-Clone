@@ -1,9 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaStar, FaChevronLeft, FaChevronRight, FaMapMarkerAlt, FaCheckCircle } from 'react-icons/fa';
+import { lawyerService } from '../services/lawyerService';
 import './FeaturedLawyers.css';
-
-import { lawyers } from '../data/lawyers';
 
 const RatingBadge = ({ rating }) => {
     let label = 'Superb';
@@ -29,10 +28,26 @@ const StarRating = ({ count = 5 }) => (
 );
 
 const FeaturedLawyers = () => {
+    const [lawyers, setLawyers] = useState([]);
+    const [loading, setLoading] = useState(true);
     const trackRef = useRef(null);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(true);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchLawyers = async () => {
+            setLoading(true);
+            try {
+                const data = await lawyerService.getAllLawyers();
+                setLawyers(data.slice(0, 10));
+            } catch (err) {
+                console.error("Failed to fetch featured lawyers:", err);
+            }
+            setLoading(false);
+        };
+        fetchLawyers();
+    }, []);
 
     // Drag-to-scroll state
     const isDragging = useRef(false);
@@ -56,7 +71,7 @@ const FeaturedLawyers = () => {
             el.removeEventListener('scroll', updateScrollButtons);
             window.removeEventListener('resize', updateScrollButtons);
         };
-    }, []);
+    }, [lawyers]); // Re-run when lawyers load to check scroll width
 
     const scrollBy = (direction) => {
         const el = trackRef.current;
@@ -68,6 +83,7 @@ const FeaturedLawyers = () => {
 
     // Drag-to-scroll handlers
     const handleMouseDown = (e) => {
+        if (loading) return;
         isDragging.current = true;
         startX.current = e.pageX;
         scrollLeftStart.current = trackRef.current.scrollLeft;
@@ -104,7 +120,7 @@ const FeaturedLawyers = () => {
                         <button
                             className="featured-lawyers__nav-btn"
                             onClick={() => scrollBy(-1)}
-                            disabled={!canScrollLeft}
+                            disabled={!canScrollLeft || loading}
                             aria-label="Previous"
                         >
                             <FaChevronLeft />
@@ -112,7 +128,7 @@ const FeaturedLawyers = () => {
                         <button
                             className="featured-lawyers__nav-btn"
                             onClick={() => scrollBy(1)}
-                            disabled={!canScrollRight}
+                            disabled={!canScrollRight || loading}
                             aria-label="Next"
                         >
                             <FaChevronRight />
@@ -127,48 +143,59 @@ const FeaturedLawyers = () => {
                     onMouseMove={handleMouseMove}
                     onMouseUp={handleMouseUp}
                     onMouseLeave={handleMouseUp}
+                    style={{ cursor: loading ? 'default' : 'grab' }}
                 >
-                    {lawyers.map((lawyer, index) => (
-                        <div key={index} className="lawyer-card">
-                            <div className="lawyer-card__top">
-                                <div className="lawyer-card__avatar" style={{ background: `linear-gradient(135deg, ${lawyer.color}, ${lawyer.color}cc)` }}>
-                                    {lawyer.initials}
-                                </div>
-                                <RatingBadge rating={lawyer.rating} />
-                            </div>
-
-                            <div className="lawyer-card__info">
-                                <h3 className="lawyer-card__name">
-                                    {lawyer.name}
-                                    {lawyer.verified && <FaCheckCircle className="lawyer-card__verified" />}
-                                </h3>
-                                <p className="lawyer-card__specialty">{lawyer.specialty}</p>
-                                <p className="lawyer-card__location">
-                                    <FaMapMarkerAlt />
-                                    {lawyer.location}
-                                </p>
-                            </div>
-
-                            <div className="lawyer-card__meta">
-                                <div className="lawyer-card__reviews">
-                                    <StarRating />
-                                    <span>{lawyer.reviews} reviews</span>
-                                </div>
-                                <span className="lawyer-card__experience">{lawyer.experience} exp.</span>
-                            </div>
-
-                            <div className="lawyer-card__actions">
-                                <button
-                                    className="btn btn-primary"
-                                    style={{ flex: 1 }}
-                                    onClick={() => navigate(`/lawyer/${index + 1}`)}
-                                >
-                                    View Profile
-                                </button>
-                                <button className="btn btn-secondary" style={{ flex: 1 }}>Contact</button>
-                            </div>
+                    {loading ? (
+                        <div style={{ padding: '60px', textAlign: 'center', width: '100%', color: 'var(--color-gray-400)' }}>
+                            <h3>Loading attorneys...</h3>
                         </div>
-                    ))}
+                    ) : lawyers.length > 0 ? (
+                        lawyers.map((lawyer) => (
+                            <div key={lawyer.id} className="lawyer-card">
+                                <div className="lawyer-card__top">
+                                    <div className="lawyer-card__avatar" style={{ background: `linear-gradient(135deg, ${lawyer.color}, ${lawyer.color}cc)` }}>
+                                        {lawyer.initials}
+                                    </div>
+                                    <RatingBadge rating={lawyer.rating} />
+                                </div>
+
+                                <div className="lawyer-card__info">
+                                    <h3 className="lawyer-card__name">
+                                        {lawyer.name}
+                                        {lawyer.verified && <FaCheckCircle className="lawyer-card__verified" />}
+                                    </h3>
+                                    <p className="lawyer-card__specialty">{lawyer.specialty}</p>
+                                    <p className="lawyer-card__location">
+                                        <FaMapMarkerAlt />
+                                        {lawyer.city || lawyer.location}
+                                    </p>
+                                </div>
+
+                                <div className="lawyer-card__meta">
+                                    <div className="lawyer-card__reviews">
+                                        <StarRating />
+                                        <span>{lawyer.reviews} reviews</span>
+                                    </div>
+                                    <span className="lawyer-card__experience">{lawyer.experience} exp.</span>
+                                </div>
+
+                                <div className="lawyer-card__actions">
+                                    <button
+                                        className="btn btn-primary"
+                                        style={{ flex: 1 }}
+                                        onClick={() => navigate(`/lawyer/${lawyer.id}`)}
+                                    >
+                                        View Profile
+                                    </button>
+                                    <button className="btn btn-secondary" style={{ flex: 1 }}>Contact</button>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <div style={{ padding: '40px', textAlign: 'center', width: '100%' }}>
+                            <p>No featured lawyers found.</p>
+                        </div>
+                    )}
                 </div>
 
                 {/* Scroll indicator dots */}
