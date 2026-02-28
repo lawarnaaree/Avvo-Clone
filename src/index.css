@@ -132,25 +132,26 @@ select {
   width: 100%;
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 0 var(--space-xl);
+  padding: 0 clamp(var(--space-md), 5vw, var(--space-xl));
 }
 
 .section {
-  padding: var(--space-4xl) 0;
+  padding: clamp(var(--space-2xl), 10vw, var(--space-4xl)) 0;
 }
 
 .section-title {
-  font-size: var(--font-size-3xl);
+  font-size: clamp(var(--font-size-2xl), 5vw, var(--font-size-4xl));
   font-weight: 800;
   color: var(--color-black);
   margin-bottom: var(--space-md);
+  line-height: 1.2;
 }
 
 .section-subtitle {
-  font-size: var(--font-size-lg);
+  font-size: clamp(var(--font-size-base), 2vw, var(--font-size-lg));
   color: var(--color-gray-600);
   margin-bottom: var(--space-2xl);
-  max-width: 600px;
+  max-width: 650px;
 }
 
 .text-center {

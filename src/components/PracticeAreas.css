@@ -97,13 +97,28 @@
     }
 
     .practice-areas__card {
-        padding: var(--space-md) var(--space-xs);
-        min-height: 100px;
+        padding: var(--space-lg) var(--space-xs);
+        min-height: 110px;
+    }
+
+    .practice-areas__title {
+        font-size: 0.8rem;
+    }
+
+    .practice-areas__icon {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
     }
 }
 
 @media (max-width: 480px) {
     .practice-areas__grid {
         grid-template-columns: repeat(2, 1fr);
+    }
+
+    .practice-areas__card {
+        padding: var(--space-md) var(--space-xs);
+        min-height: 100px;
     }
 }

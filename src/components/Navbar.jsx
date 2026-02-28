@@ -14,6 +14,14 @@ const Navbar = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    useEffect(() => {
+        if (mobileOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'auto';
+        }
+    }, [mobileOpen]);
+
     return (
         <nav className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`}>
             <div className="navbar__container container">
@@ -67,18 +75,19 @@ const Navbar = () => {
                     {mobileOpen ? <FiX /> : <FiMenu />}
                 </button>
 
-                {/* Mobile Menu */}
-                <div className={`navbar__mobile-menu ${mobileOpen ? 'navbar__mobile-menu--open' : ''}`}>
-                    <ul className="navbar__mobile-links">
-                        <li><a href="#find" onClick={() => setMobileOpen(false)}>Find a Lawyer</a></li>
-                        <li><a href="#ask" onClick={() => setMobileOpen(false)}>Ask a Lawyer</a></li>
-                        <li><a href="#research" onClick={() => setMobileOpen(false)}>Research Legal Topics</a></li>
-                        <li><a href="#lawyers" onClick={() => setMobileOpen(false)}>Browse Lawyers</a></li>
-                    </ul>
-                    <div className="navbar__mobile-actions">
-                        <a href="#signin" className="btn btn-secondary" style={{ width: '100%' }}>Sign In</a>
-                        <a href="#register" className="btn btn-primary" style={{ width: '100%' }}>Register</a>
-                    </div>
+            </div>
+
+            {/* Mobile Menu - Moved outside container for full-screen coverage */}
+            <div className={`navbar__mobile-menu ${mobileOpen ? 'navbar__mobile-menu--open' : ''}`}>
+                <ul className="navbar__mobile-links">
+                    <li><a href="#find" onClick={() => setMobileOpen(false)}>Find a Lawyer</a></li>
+                    <li><a href="#ask" onClick={() => setMobileOpen(false)}>Ask a Lawyer</a></li>
+                    <li><a href="#research" onClick={() => setMobileOpen(false)}>Research Legal Topics</a></li>
+                    <li><a href="#lawyers" onClick={() => setMobileOpen(false)}>Browse Lawyers</a></li>
+                </ul>
+                <div className="navbar__mobile-actions">
+                    <a href="#signin" className="btn btn-secondary" style={{ width: '100%' }}>Sign In</a>
+                    <a href="#register" className="btn btn-primary" style={{ width: '100%' }}>Register</a>
                 </div>
             </div>
         </nav>
