@@ -43,7 +43,6 @@ const PracticeAreas = () => {
                                 {area.icon}
                             </div>
                             <h3 className="practice-areas__title">{area.title}</h3>
-                            <p className="practice-areas__desc">{area.desc}</p>
                             <span className="practice-areas__arrow">→</span>
                         </a>
                     ))}
