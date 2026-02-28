@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { FiSearch, FiMapPin } from 'react-icons/fi';
 import { FaBalanceScale, FaGavel, FaCar, FaUserInjured, FaBriefcase, FaHome } from 'react-icons/fa';
 import './Hero.css';
@@ -15,6 +16,11 @@ const quickLinks = [
 const Hero = () => {
     const [issue, setIssue] = useState('');
     const [location, setLocation] = useState('');
+    const navigate = useNavigate();
+
+    const handleSearch = () => {
+        navigate(`/search?issue=${encodeURIComponent(issue)}&location=${encodeURIComponent(location)}`);
+    };
 
     return (
         <section className="hero">
@@ -59,7 +65,10 @@ const Hero = () => {
                                 className="hero__search-input"
                             />
                         </div>
-                        <button className="hero__search-btn btn btn-primary btn-lg">
+                        <button
+                            className="hero__search-btn btn btn-primary btn-lg"
+                            onClick={handleSearch}
+                        >
                             <FiSearch />
                             Find a Lawyer
                         </button>
@@ -70,14 +79,14 @@ const Hero = () => {
                         <span className="hero__quick-label">Popular:</span>
                         <div className="hero__chips">
                             {quickLinks.map((link, index) => (
-                                <a
-                                    href={`#${link.label.toLowerCase().replace(/\s+/g, '-')}`}
+                                <Link
+                                    to={`/search?topic=${link.label.toLowerCase().replace(/\s+/g, '-')}`}
                                     key={index}
                                     className="hero__chip"
                                 >
                                     {link.icon}
                                     {link.label}
-                                </a>
+                                </Link>
                             ))}
                         </div>
                     </div>

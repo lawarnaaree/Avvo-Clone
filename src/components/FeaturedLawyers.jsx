@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaStar, FaChevronLeft, FaChevronRight, FaMapMarkerAlt, FaCheckCircle } from 'react-icons/fa';
 import './FeaturedLawyers.css';
 
@@ -98,6 +99,7 @@ const FeaturedLawyers = () => {
     const trackRef = useRef(null);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(true);
+    const navigate = useNavigate();
 
     // Drag-to-scroll state
     const isDragging = useRef(false);
@@ -223,7 +225,13 @@ const FeaturedLawyers = () => {
                             </div>
 
                             <div className="lawyer-card__actions">
-                                <button className="btn btn-primary" style={{ flex: 1 }}>View Profile</button>
+                                <button
+                                    className="btn btn-primary"
+                                    style={{ flex: 1 }}
+                                    onClick={() => navigate(`/lawyer/${index + 1}`)}
+                                >
+                                    View Profile
+                                </button>
                                 <button className="btn btn-secondary" style={{ flex: 1 }}>Contact</button>
                             </div>
                         </div>

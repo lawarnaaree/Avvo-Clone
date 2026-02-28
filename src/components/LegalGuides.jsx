@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { FiArrowRight, FiClock, FiBookOpen } from 'react-icons/fi';
 import './LegalGuides.css';
 
@@ -58,14 +59,14 @@ const LegalGuides = () => {
                             Free legal guides written by Nepali attorneys to help you understand your rights under the local law.
                         </p>
                     </div>
-                    <a href="#all-guides" className="legal-guides__view-all">
+                    <Link to="/search?type=guides" className="legal-guides__view-all">
                         View All Guides <FiArrowRight />
-                    </a>
+                    </Link>
                 </div>
 
                 <div className="legal-guides__grid">
                     {guides.map((guide, index) => (
-                        <a href="#" key={index} className="guide-card" style={{ animationDelay: `${index * 0.08}s` }}>
+                        <Link to={`/guide/${index + 1}`} key={index} className="guide-card" style={{ animationDelay: `${index * 0.08}s` }}>
                             <div className="guide-card__category" style={{ color: guide.color }}>
                                 <FiBookOpen />
                                 {guide.category}
@@ -80,7 +81,7 @@ const LegalGuides = () => {
                                     Read More <FiArrowRight />
                                 </span>
                             </div>
-                        </a>
+                        </Link>
                     ))}
                 </div>
             </div>

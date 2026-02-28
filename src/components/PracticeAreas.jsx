@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import {
     FaBalanceScale, FaGavel, FaCar, FaUserInjured, FaBriefcase, FaHome,
     FaPassport, FaFileContract, FaMoneyBillWave, FaUserTie, FaLightbulb, FaCalculator
@@ -33,8 +34,8 @@ const PracticeAreas = () => {
 
                 <div className="practice-areas__grid">
                     {areas.map((area, index) => (
-                        <a
-                            href={`#${area.title.toLowerCase().replace(/\s+/g, '-')}`}
+                        <Link
+                            to={`/search?topic=${area.title.toLowerCase().replace(/\s+/g, '-')}`}
                             key={index}
                             className="practice-areas__card"
                             style={{ '--card-accent': area.color, animationDelay: `${index * 0.05}s` }}
@@ -44,7 +45,7 @@ const PracticeAreas = () => {
                             </div>
                             <h3 className="practice-areas__title">{area.title}</h3>
                             <span className="practice-areas__arrow">→</span>
-                        </a>
+                        </Link>
                     ))}
                 </div>
             </div>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { FaFacebookF, FaTwitter, FaLinkedinIn, FaInstagram, FaYoutube } from 'react-icons/fa';
 import './Footer.css';
 
@@ -20,7 +21,7 @@ const Footer = () => {
                 {/* Footer Links */}
                 <div className="footer__grid">
                     <div className="footer__col">
-                        <a href="/" className="footer__logo">Find Lawyer Nepal</a>
+                        <Link to="/" className="footer__logo">Find Lawyer Nepal</Link>
                         <p className="footer__about">
                             Find Lawyer Nepal connects people with the right lawyers. Search for attorneys, get free legal advice, and research legal topics.
                         </p>
@@ -36,12 +37,12 @@ const Footer = () => {
                     <div className="footer__col">
                         <h4 className="footer__col-title">For Clients</h4>
                         <ul className="footer__links">
-                            <li><a href="#">Find a Lawyer</a></li>
-                            <li><a href="#">Ask a Lawyer</a></li>
-                            <li><a href="#">Research Legal Topics</a></li>
-                            <li><a href="#">Legal Guides</a></li>
-                            <li><a href="#">Lawyer Reviews</a></li>
-                            <li><a href="#">Free Legal Advice</a></li>
+                            <li><Link to="/search">Find a Lawyer</Link></li>
+                            <li><Link to="/ask">Ask a Lawyer</Link></li>
+                            <li><Link to="/search?type=research">Research Legal Topics</Link></li>
+                            <li><Link to="/search?type=guides">Legal Guides</Link></li>
+                            <li><Link to="/search?type=reviews">Lawyer Reviews</Link></li>
+                            <li><Link to="/ask">Free Legal Advice</Link></li>
                         </ul>
                     </div>
 
@@ -60,12 +61,12 @@ const Footer = () => {
                     <div className="footer__col">
                         <h4 className="footer__col-title">Legal Topics</h4>
                         <ul className="footer__links">
-                            <li><a href="#">Family Law</a></li>
-                            <li><a href="#">Criminal Defense</a></li>
-                            <li><a href="#">Personal Injury</a></li>
-                            <li><a href="#">DUI / DWI</a></li>
-                            <li><a href="#">Immigration</a></li>
-                            <li><a href="#">Bankruptcy</a></li>
+                            <li><Link to="/search?topic=family">Family Law</Link></li>
+                            <li><Link to="/search?topic=criminal">Criminal Defense</Link></li>
+                            <li><Link to="/search?topic=personal-injury">Personal Injury</Link></li>
+                            <li><Link to="/search?topic=dui">DUI / DWI</Link></li>
+                            <li><Link to="/search?topic=immigration">Immigration</Link></li>
+                            <li><Link to="/search?topic=bankruptcy">Bankruptcy</Link></li>
                         </ul>
                     </div>
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { FiSearch, FiMenu, FiX, FiChevronDown } from 'react-icons/fi';
 import './Navbar.css';
 
@@ -26,34 +27,34 @@ const Navbar = () => {
         <nav className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`}>
             <div className="navbar__container container">
                 {/* Logo */}
-                <a href="/" className="navbar__logo">
+                <Link to="/" className="navbar__logo" onClick={() => setMobileOpen(false)}>
                     <span className="navbar__logo-text">Find Lawyer Nepal</span>
-                </a>
+                </Link>
 
                 {/* Desktop Nav Links */}
                 <ul className="navbar__links">
                     <li className="navbar__link-item">
-                        <a href="#find" className="navbar__link">
+                        <Link to="/search" className="navbar__link">
                             Find a Lawyer
                             <FiChevronDown className="navbar__link-icon" />
-                        </a>
+                        </Link>
                     </li>
                     <li className="navbar__link-item">
-                        <a href="#ask" className="navbar__link">
+                        <Link to="/ask" className="navbar__link">
                             Ask a Lawyer
-                        </a>
+                        </Link>
                     </li>
                     <li className="navbar__link-item">
-                        <a href="#research" className="navbar__link">
+                        <Link to="/search?type=research" className="navbar__link">
                             Research Legal Topics
                             <FiChevronDown className="navbar__link-icon" />
-                        </a>
+                        </Link>
                     </li>
                     <li className="navbar__link-item">
-                        <a href="#lawyers" className="navbar__link">
+                        <Link to="/search?type=browse" className="navbar__link">
                             Browse Lawyers
                             <FiChevronDown className="navbar__link-icon" />
-                        </a>
+                        </Link>
                     </li>
                 </ul>
 
@@ -80,10 +81,10 @@ const Navbar = () => {
             {/* Mobile Menu - Moved outside container for full-screen coverage */}
             <div className={`navbar__mobile-menu ${mobileOpen ? 'navbar__mobile-menu--open' : ''}`}>
                 <ul className="navbar__mobile-links">
-                    <li><a href="#find" onClick={() => setMobileOpen(false)}>Find a Lawyer</a></li>
-                    <li><a href="#ask" onClick={() => setMobileOpen(false)}>Ask a Lawyer</a></li>
-                    <li><a href="#research" onClick={() => setMobileOpen(false)}>Research Legal Topics</a></li>
-                    <li><a href="#lawyers" onClick={() => setMobileOpen(false)}>Browse Lawyers</a></li>
+                    <li><Link to="/search" onClick={() => setMobileOpen(false)}>Find a Lawyer</Link></li>
+                    <li><Link to="/ask" onClick={() => setMobileOpen(false)}>Ask a Lawyer</Link></li>
+                    <li><Link to="/search?type=research" onClick={() => setMobileOpen(false)}>Research Legal Topics</Link></li>
+                    <li><Link to="/search?type=browse" onClick={() => setMobileOpen(false)}>Browse Lawyers</Link></li>
                 </ul>
                 <div className="navbar__mobile-actions">
                     <a href="#signin" className="btn btn-secondary" style={{ width: '100%' }}>Sign In</a>

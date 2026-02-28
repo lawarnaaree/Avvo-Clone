@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaUserCircle, FaCommentDots, FaGavel, FaThumbsUp } from 'react-icons/fa';
 import { FiMessageCircle, FiArrowRight } from 'react-icons/fi';
 import './QASection.css';
@@ -40,6 +41,7 @@ const questions = [
 ];
 
 const QASection = () => {
+    const navigate = useNavigate();
     return (
         <section className="qa-section section" id="ask">
             <div className="container">
@@ -56,7 +58,7 @@ const QASection = () => {
                                 placeholder="Type your legal question here..."
                                 className="qa-section__ask-input"
                             />
-                            <button className="btn btn-primary">Ask Now</button>
+                            <button className="btn btn-primary" onClick={() => navigate('/ask')}>Ask Now</button>
                         </div>
                         <div className="qa-section__ask-stats">
                             <span><strong>10M+</strong> questions answered</span>
