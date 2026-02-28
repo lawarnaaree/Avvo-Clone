@@ -3,74 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FaStar, FaChevronLeft, FaChevronRight, FaMapMarkerAlt, FaCheckCircle } from 'react-icons/fa';
 import './FeaturedLawyers.css';
 
-const lawyers = [
-    {
-        name: 'Lawarna Aree',
-        specialty: 'Family Law Attorney',
-        location: 'Kathmandu, Bagmati',
-        rating: 10,
-        reviews: 127,
-        experience: '15 years',
-        verified: true,
-        initials: 'LA',
-        color: '#e91e63',
-    },
-    {
-        name: 'Lawarna Aree',
-        specialty: 'Criminal Defense Lawyer',
-        location: 'Pokhara, Gandaki',
-        rating: 9.8,
-        reviews: 94,
-        experience: '20 years',
-        verified: true,
-        initials: 'LA',
-        color: '#9c27b0',
-    },
-    {
-        name: 'Lawarna Aree',
-        specialty: 'Personal Injury Attorney',
-        location: 'Lalitpur, Bagmati',
-        rating: 9.5,
-        reviews: 203,
-        experience: '12 years',
-        verified: true,
-        initials: 'LA',
-        color: '#2196f3',
-    },
-    {
-        name: 'Lawarna Aree',
-        specialty: 'Immigration Lawyer',
-        location: 'Bharatpur, Chitwan',
-        rating: 9.7,
-        reviews: 156,
-        experience: '18 years',
-        verified: true,
-        initials: 'LA',
-        color: '#ff9800',
-    },
-    {
-        name: 'Lawarna Aree',
-        specialty: 'Bankruptcy Attorney',
-        location: 'Biratnagar, Koshi',
-        rating: 9.3,
-        reviews: 88,
-        experience: '10 years',
-        verified: true,
-        initials: 'LA',
-        color: '#4caf50',
-    },
-    {
-        name: 'Lawarna Aree',
-        specialty: 'Business Law Attorney',
-        location: 'Butwal, Lumbini',
-        rating: 9.9,
-        reviews: 171,
-        experience: '22 years',
-        verified: true,
-        initials: 'LA',
-        color: '#607d8b',
-    },
-];
+import { lawyers } from '../data/lawyers';
 
 const RatingBadge = ({ rating }) => {
     let label = 'Superb';
