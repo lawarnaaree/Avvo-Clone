@@ -7,6 +7,9 @@ import SearchResults from './pages/SearchResults';
 import LawyerProfile from './pages/LawyerProfile';
 import LegalGuide from './pages/LegalGuide';
 import AskLawyer from './pages/AskLawyer';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import { AuthProvider } from './context/AuthContext';
 import Lenis from 'lenis';
 
 // Scroll to top on route change
@@ -34,18 +37,22 @@ const App = () => {
   }, []);
 
   return (
-    <Router>
-      <ScrollToTop />
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/search" element={<SearchResults />} />
-        <Route path="/lawyer/:id" element={<LawyerProfile />} />
-        <Route path="/guide/:id" element={<LegalGuide />} />
-        <Route path="/ask" element={<AskLawyer />} />
-      </Routes>
-      <Footer />
-    </Router>
+    <AuthProvider>
+      <Router>
+        <ScrollToTop />
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/search" element={<SearchResults />} />
+          <Route path="/lawyer/:id" element={<LawyerProfile />} />
+          <Route path="/guide/:id" element={<LegalGuide />} />
+          <Route path="/ask" element={<AskLawyer />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
+        <Footer />
+      </Router>
+    </AuthProvider>
   );
 };
 

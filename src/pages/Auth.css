@@ -1,0 +1,109 @@
+.auth-page {
+    padding: 80px 0;
+    background: var(--color-gray-50);
+    min-height: calc(100vh - 68px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.auth-container {
+    width: 100%;
+    max-width: 500px;
+    background: var(--color-white);
+    padding: var(--space-xl) var(--space-2xl);
+    border-radius: var(--border-radius-xl);
+    box-shadow: var(--shadow-xl);
+    border: 1px solid var(--color-gray-200);
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: var(--space-xl);
+}
+
+.auth-title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--color-black);
+    margin-bottom: var(--space-xs);
+}
+
+.auth-subtitle {
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-500);
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--color-gray-700);
+}
+
+.form-input {
+    padding: 0.85rem 1rem;
+    border: 2px solid var(--color-gray-100);
+    border-radius: var(--border-radius-md);
+    font-size: var(--font-size-base);
+    transition: all var(--transition-fast);
+}
+
+.form-input:focus {
+    border-color: var(--color-primary-light);
+    outline: none;
+    background: var(--color-white);
+}
+
+.auth-error {
+    background: #fef2f2;
+    color: #dc2626;
+    padding: 0.75rem;
+    border-radius: var(--border-radius-md);
+    font-size: 0.85rem;
+    border: 1px solid #fee2e2;
+    text-align: center;
+}
+
+.auth-footer {
+    margin-top: var(--space-xl);
+    text-align: center;
+    font-size: var(--font-size-sm);
+    color: var(--color-gray-500);
+}
+
+.auth-link {
+    color: var(--color-primary);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.auth-link:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+    .auth-container {
+        padding: var(--space-xl);
+        border-radius: 0;
+        box-shadow: none;
+        border: none;
+        background: transparent;
+    }
+
+    .auth-page {
+        background: var(--color-white);
+    }
+}

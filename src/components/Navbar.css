@@ -195,3 +195,46 @@
         display: flex;
     }
 }
+
+.navbar__user {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: 0.5rem 1rem;
+    background: var(--color-gray-50);
+    border-radius: var(--border-radius-full);
+}
+
+.navbar__user-name {
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    color: var(--color-gray-700);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.navbar__logout-btn {
+    background: none;
+    border: none;
+    color: var(--color-gray-400);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: color var(--transition-fast);
+}
+
+.navbar__logout-btn:hover {
+    color: #dc2626;
+}
+
+.navbar__mobile-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-gray-800);
+    padding-bottom: var(--space-sm);
+    border-bottom: 2px solid var(--color-gray-100);
+}

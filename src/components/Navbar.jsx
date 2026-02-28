@@ -1,11 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { FiSearch, FiMenu, FiX, FiChevronDown } from 'react-icons/fi';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { FiSearch, FiMenu, FiX, FiChevronDown, FiUser, FiLogOut } from 'react-icons/fi';
 import './Navbar.css';
 
 const Navbar = () => {
     const [scrolled, setScrolled] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
+    const { user, logout } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = async () => {
+        try {
+            await logout();
+            navigate('/');
+        } catch (err) {
+            console.error('Failed to log out', err);
+        }
+    };
 
     useEffect(() => {
         const handleScroll = () => {
@@ -63,8 +75,19 @@ const Navbar = () => {
                     <button className="navbar__search-btn" aria-label="Search">
                         <FiSearch />
                     </button>
-                    <a href="#signin" className="navbar__signin">Sign In</a>
-                    <a href="#register" className="btn btn-primary navbar__register-btn">Register</a>
+                    {user ? (
+                        <div className="navbar__user">
+                            <span className="navbar__user-name"><FiUser /> {user.displayName || 'User'}</span>
+                            <button onClick={handleLogout} className="navbar__logout-btn" title="Logout">
+                                <FiLogOut />
+                            </button>
+                        </div>
+                    ) : (
+                        <>
+                            <Link to="/login" className="navbar__signin">Sign In</Link>
+                            <Link to="/register" className="btn btn-primary navbar__register-btn">Register</Link>
+                        </>
+                    )}
                 </div>
 
                 {/* Mobile Menu Toggle */}
@@ -87,8 +110,21 @@ const Navbar = () => {
                     <li><Link to="/search?type=browse" onClick={() => setMobileOpen(false)}>Browse Lawyers</Link></li>
                 </ul>
                 <div className="navbar__mobile-actions">
-                    <a href="#signin" className="btn btn-secondary" style={{ width: '100%' }}>Sign In</a>
-                    <a href="#register" className="btn btn-primary" style={{ width: '100%' }}>Register</a>
+                    {user ? (
+                        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                            <div className="navbar__mobile-user">
+                                <FiUser /> {user.displayName || user.email}
+                            </div>
+                            <button onClick={handleLogout} className="btn btn-secondary" style={{ width: '100%' }}>
+                                <FiLogOut /> Logout
+                            </button>
+                        </div>
+                    ) : (
+                        <>
+                            <Link to="/login" className="btn btn-secondary" style={{ width: '100%' }} onClick={() => setMobileOpen(false)}>Sign In</Link>
+                            <Link to="/register" className="btn btn-primary" style={{ width: '100%' }} onClick={() => setMobileOpen(false)}>Register</Link>
+                        </>
+                    )}
                 </div>
             </div>
         </nav>

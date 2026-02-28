@@ -1,16 +1,28 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { lawyers } from '../data/lawyers';
+import { lawyerService } from '../services/lawyerService';
 import { FiMapPin, FiStar, FiFilter, FiCheckCircle, FiSearch } from 'react-icons/fi';
 import './SearchResults.css';
 
 const SearchResults = () => {
     const [searchParams, setSearchParams] = useSearchParams();
+    const [lawyers, setLawyers] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const issueQuery = searchParams.get('issue') || '';
     const locationQuery = searchParams.get('location') || '';
     const topicQuery = searchParams.get('topic') || '';
     const typeQuery = searchParams.get('type') || '';
+
+    useEffect(() => {
+        const fetchLawyers = async () => {
+            setLoading(true);
+            const data = await lawyerService.getAllLawyers();
+            setLawyers(data);
+            setLoading(false);
+        };
+        fetchLawyers();
+    }, []);
 
     // Advanced filtering logic
     const filteredLawyers = useMemo(() => {
@@ -27,11 +39,11 @@ const SearchResults = () => {
 
             return matchesIssue && matchesLocation && matchesTopic;
         });
-    }, [issueQuery, locationQuery, topicQuery]);
+    }, [issueQuery, locationQuery, topicQuery, lawyers]);
 
     // Grouping for sidebar filters
-    const cities = [...new Set(lawyers.map(l => l.city))];
-    const specialties = [...new Set(lawyers.map(l => l.specialty))];
+    const cities = useMemo(() => [...new Set(lawyers.map(l => l.city))], [lawyers]);
+    const specialties = useMemo(() => [...new Set(lawyers.map(l => l.specialty))], [lawyers]);
 
     const toggleFilter = (key, value) => {
         const newParams = new URLSearchParams(searchParams);
@@ -42,6 +54,10 @@ const SearchResults = () => {
         }
         setSearchParams(newParams);
     };
+
+    if (loading) {
+        return <div className="search-results-page" style={{ textAlign: 'center', padding: '100px' }}><h2>Loading attorneys...</h2></div>;
+    }
 
     return (
         <div className="search-results-page">
