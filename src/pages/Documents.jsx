@@ -62,10 +62,22 @@ const Documents = () => {
         <div className="documents-page">
             <div className="container">
                 <div className="documents-page__header">
-                    <span className="documents-page__badge">Legal Documents</span>
-                    <h1 className="documents-page__title">
-                        Personalize documents for your situation
-                    </h1>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <div>
+                            <span className="documents-page__badge">Legal Documents</span>
+                            <h1 className="documents-page__title">
+                                Personalize documents for your situation
+                            </h1>
+                        </div>
+                        <button
+                            className="btn btn-secondary btn-sm"
+                            onClick={handleSeed}
+                            disabled={seeding}
+                            style={{ fontSize: '0.7rem', opacity: 0.6 }}
+                        >
+                            {seeding ? 'Refreshing...' : 'Refresh Library (Dev)'}
+                        </button>
+                    </div>
                     <p className="documents-page__subtitle">
                         Browse our library of legal documents designed for Nepal's legal framework.
                     </p>

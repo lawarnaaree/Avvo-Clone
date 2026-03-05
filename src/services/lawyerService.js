@@ -75,6 +75,52 @@ export const lawyerService = {
         }
     },
 
+    // Update lawyer profile in both users collection and potentially lawyers collection
+    updateLawyerProfile: async (userId, profileData) => {
+        try {
+            // Update users collection
+            const userRef = doc(db, 'users', userId);
+            await updateDoc(userRef, {
+                ...profileData,
+                updatedAt: serverTimestamp()
+            });
+
+            // Also update/create in lawyers collection for public listing
+            const lawyerRef = doc(db, COLLECTION_NAME, userId);
+            const lawyerDoc = await getDoc(lawyerRef);
+
+            const lawyerPublicData = {
+                name: profileData.displayName,
+                specialty: profileData.specialty,
+                title: profileData.title,
+                bio: profileData.bio,
+                experience: profileData.experience,
+                education: profileData.education,
+                office: profileData.office,
+                phone: profileData.phone,
+                website: profileData.website,
+                updatedAt: serverTimestamp()
+            };
+
+            if (lawyerDoc.exists()) {
+                await updateDoc(lawyerRef, lawyerPublicData);
+            } else {
+                // If they don't exist in lawyers yet, create them with defaults
+                await setDoc(lawyerRef, {
+                    ...lawyerPublicData,
+                    rating: 0,
+                    reviewCount: 0,
+                    avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.displayName)}&background=random`,
+                    city: profileData.office?.split(',').pop()?.trim() || 'Kathmandu'
+                });
+            }
+            return true;
+        } catch (error) {
+            console.error("Error updating lawyer profile:", error);
+            throw error;
+        }
+    },
+
     // Seed mock data to Firestore (Utility function)
     seedMockData: async () => {
         try {

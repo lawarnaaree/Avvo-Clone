@@ -94,6 +94,27 @@
     text-decoration: underline;
 }
 
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+    margin-top: 0.5rem;
+}
+
+.checkbox-container input {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.checkbox-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-gray-700);
+}
+
 @media (max-width: 480px) {
     .auth-container {
         padding: var(--space-xl);

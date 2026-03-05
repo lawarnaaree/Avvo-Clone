@@ -1,5 +1,6 @@
 .search-results-page {
     padding-top: 100px;
+    padding-bottom: 100px;
     background: var(--color-gray-50);
     min-height: 100vh;
 }

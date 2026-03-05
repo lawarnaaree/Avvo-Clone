@@ -9,10 +9,29 @@ import LegalGuide from './pages/LegalGuide';
 import AskLawyer from './pages/AskLawyer';
 import Documents from './pages/Documents';
 import DocumentBuilder from './pages/DocumentBuilder';
+import LawyerDashboard from './pages/lawyer/LawyerDashboard';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { Navigate } from 'react-router-dom';
 import Lenis from 'lenis';
+
+// Protected Route Component
+const ProtectedRoute = ({ children, requireLawyer = false }) => {
+  const { user, userProfile, loading } = useAuth();
+
+  if (loading) return null;
+
+  if (!user) {
+    return <Navigate to="/login" />;
+  }
+
+  if (requireLawyer && userProfile?.role !== 'lawyer') {
+    return <Navigate to="/" />;
+  }
+
+  return children;
+};
 
 // Scroll to top on route change
 const ScrollToTop = () => {
@@ -53,6 +72,16 @@ const App = () => {
           <Route path="/documents/:templateId" element={<DocumentBuilder />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+
+          {/* Lawyer Dashboard Protected Routes */}
+          <Route
+            path="/dashboard/lawyer/*"
+            element={
+              <ProtectedRoute requireLawyer={true}>
+                <LawyerDashboard />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
         <Footer />
       </Router>

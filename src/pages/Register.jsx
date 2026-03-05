@@ -8,6 +8,7 @@ const Register = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [role, setRole] = useState('user');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
@@ -24,8 +25,8 @@ const Register = () => {
         setError('');
         setLoading(true);
         try {
-            await register(email, password, name);
-            navigate('/');
+            await register(email, password, name, role);
+            navigate(role === 'lawyer' ? '/dashboard/lawyer' : '/');
         } catch (err) {
             setError(err.message || 'Failed to create an account.');
             console.error(err);
@@ -93,10 +94,21 @@ const Register = () => {
                         />
                     </div>
 
+                    <div className="form-group" style={{ marginBottom: '0.5rem' }}>
+                        <label className="checkbox-container">
+                            <input
+                                type="checkbox"
+                                checked={role === 'lawyer'}
+                                onChange={(e) => setRole(e.target.checked ? 'lawyer' : 'user')}
+                            />
+                            <span className="checkbox-label">I am a legal professional (Register as Lawyer)</span>
+                        </label>
+                    </div>
+
                     <button
                         type="submit"
                         className="btn btn-primary btn-lg"
-                        style={{ width: '100%', marginTop: '1rem' }}
+                        style={{ width: '100%', marginTop: '0.5rem' }}
                         disabled={loading}
                     >
                         {loading ? 'Creating Account...' : 'Register'}

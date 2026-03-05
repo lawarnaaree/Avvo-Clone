@@ -7,7 +7,7 @@ import './Navbar.css';
 const Navbar = () => {
     const [scrolled, setScrolled] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
-    const { user, logout } = useAuth();
+    const { user, logout, isLawyer } = useAuth();
     const navigate = useNavigate();
 
     const handleLogout = async () => {
@@ -67,6 +67,13 @@ const Navbar = () => {
                             <FiChevronDown className="navbar__link-icon" />
                         </Link>
                     </li>
+                    {isLawyer && (
+                        <li className="navbar__link-item">
+                            <Link to="/dashboard/lawyer" className="navbar__link" style={{ color: 'var(--color-primary)', fontWeight: '800' }}>
+                                Dashboard
+                            </Link>
+                        </li>
+                    )}
                 </ul>
 
                 {/* Right Side */}
@@ -107,6 +114,7 @@ const Navbar = () => {
                     <li><Link to="/ask" onClick={() => setMobileOpen(false)}>Ask a Lawyer</Link></li>
                     <li><Link to="/documents" onClick={() => setMobileOpen(false)}>Legal Documents</Link></li>
                     <li><Link to="/search?type=browse" onClick={() => setMobileOpen(false)}>Browse Lawyers</Link></li>
+                    {isLawyer && <li><Link to="/dashboard/lawyer" style={{ color: 'var(--color-primary)', fontWeight: '800' }} onClick={() => setMobileOpen(false)}>Dashboard</Link></li>}
                 </ul>
                 <div className="navbar__mobile-actions">
                     {user ? (

@@ -6,7 +6,8 @@ import {
     signOut,
     updateProfile
 } from 'firebase/auth';
-import { auth } from '../backend/firebase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { auth, db } from '../backend/firebase';
 
 const AuthContext = createContext();
 
@@ -14,21 +15,55 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const [userProfile, setUserProfile] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+        const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
             setUser(currentUser);
+
+            if (currentUser) {
+                // Fetch user profile from Firestore
+                try {
+                    const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+                    if (userDoc.exists()) {
+                        setUserProfile(userDoc.data());
+                    } else {
+                        setUserProfile(null);
+                    }
+                } catch (error) {
+                    console.error("Error fetching user profile:", error);
+                    setUserProfile(null);
+                }
+            } else {
+                setUserProfile(null);
+            }
+
             setLoading(false);
         });
         return () => unsubscribe();
     }, []);
 
-    const register = async (email, password, name) => {
+    const register = async (email, password, name, role = 'user') => {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const newUser = userCredential.user;
+
         if (name) {
-            await updateProfile(userCredential.user, { displayName: name });
+            await updateProfile(newUser, { displayName: name });
         }
+
+        // Create user document in Firestore
+        const profileData = {
+            uid: newUser.uid,
+            email: newUser.email,
+            displayName: name,
+            role: role,
+            createdAt: new Date().toISOString()
+        };
+
+        await setDoc(doc(db, 'users', newUser.uid), profileData);
+        setUserProfile(profileData);
+
         return userCredential;
     };
 
@@ -42,10 +77,12 @@ export const AuthProvider = ({ children }) => {
 
     const value = {
         user,
+        userProfile,
         register,
         login,
         logout,
-        loading
+        loading,
+        isLawyer: userProfile?.role === 'lawyer'
     };
 
     return (

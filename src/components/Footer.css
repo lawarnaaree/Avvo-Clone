@@ -14,7 +14,9 @@
     background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
     border-radius: var(--border-radius-xl);
     margin-bottom: var(--space-3xl);
-    transform: translateY(-50%);
+    margin-top: -40px;
+    position: relative;
+    z-index: 1;
 }
 
 .footer__cta-title {
