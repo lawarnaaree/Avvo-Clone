@@ -36,7 +36,7 @@ const Navbar = () => {
     }, [mobileOpen]);
 
     return (
-        <nav className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`}>
+        <nav className={`navbar ${scrolled ? 'navbar--scrolled glass-nav' : ''}`}>
             <div className="navbar__container container">
                 {/* Logo */}
                 <Link to="/" className="navbar__logo" onClick={() => setMobileOpen(false)}>

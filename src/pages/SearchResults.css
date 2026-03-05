@@ -14,10 +14,8 @@
 
 /* Sidebar */
 .search-results__sidebar {
-    background: var(--color-white);
     padding: var(--space-lg);
     border-radius: var(--border-radius-lg);
-    border: 1px solid var(--color-gray-200);
     height: fit-content;
     position: sticky;
     top: 100px;
@@ -142,12 +140,9 @@
     display: grid;
     grid-template-columns: 100px 1fr 180px;
     gap: var(--space-xl);
-    background: var(--color-white);
     padding: var(--space-lg);
     border-radius: 16px;
-    border: 1px solid rgba(0, 0, 0, 0.05);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
 }
 
 .result-card:hover {

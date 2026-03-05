@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { FiSearch, FiBriefcase, FiHome, FiHeart, FiArrowRight, FiFileText } from 'react-icons/fi';
 import { documentService } from '../services/documentService';
-import { seedDocumentTemplates } from '../services/seedDocuments';
+import Skeleton from '../components/Skeleton';
 import './Documents.css';
 
 const categoryMeta = {
@@ -62,29 +62,17 @@ const Documents = () => {
         <div className="documents-page">
             <div className="container">
                 <div className="documents-page__header">
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                        <div>
-                            <span className="documents-page__badge">Legal Documents</span>
-                            <h1 className="documents-page__title">
-                                Personalize documents for your situation
-                            </h1>
-                        </div>
-                        <button
-                            className="btn btn-secondary btn-sm"
-                            onClick={handleSeed}
-                            disabled={seeding}
-                            style={{ fontSize: '0.7rem', opacity: 0.6 }}
-                        >
-                            {seeding ? 'Refreshing...' : 'Refresh Library (Dev)'}
-                        </button>
-                    </div>
+                    <span className="documents-page__badge">Legal Documents</span>
+                    <h1 className="documents-page__title">
+                        Personalize documents for your situation
+                    </h1>
                     <p className="documents-page__subtitle">
                         Browse our library of legal documents designed for Nepal's legal framework.
                     </p>
                 </div>
 
                 {/* Search */}
-                <div className="documents-search">
+                <div className="documents-search glass-card">
                     <FiSearch className="documents-search__icon" />
                     <input
                         type="text"
@@ -116,8 +104,17 @@ const Documents = () => {
 
                 {/* Document Cards */}
                 {loading ? (
-                    <div className="documents-empty">
-                        <p>Loading documents...</p>
+                    <div className="documents-cards">
+                        {[1, 2, 3, 4, 5, 6].map(i => (
+                            <div key={i} className="document-card glass-card">
+                                <Skeleton height="48px" width="48px" borderRadius="12px" className="mb-md" />
+                                <Skeleton height="14px" width="30%" className="mb-sm" />
+                                <Skeleton height="24px" width="80%" className="mb-sm" />
+                                <Skeleton height="14px" width="100%" className="mb-sm" />
+                                <Skeleton height="14px" width="60%" className="mb-lg" />
+                                <Skeleton height="16px" width="40%" />
+                            </div>
+                        ))}
                     </div>
                 ) : filteredTemplates.length > 0 ? (
                     <div className="documents-cards">
@@ -127,7 +124,7 @@ const Documents = () => {
                                 <Link
                                     key={template.id}
                                     to={`/documents/${template.slug}`}
-                                    className="document-card"
+                                    className="document-card glass-card"
                                 >
                                     <div className={`document-card__icon ${meta.iconClass}`}>
                                         {meta.icon}
@@ -146,16 +143,6 @@ const Documents = () => {
                     <div className="documents-empty">
                         <FiFileText />
                         <p>No documents found. Try a different search or category.</p>
-                        {templates.length === 0 && (
-                            <button
-                                className="btn btn-primary"
-                                style={{ marginTop: '1rem' }}
-                                onClick={handleSeed}
-                                disabled={seeding}
-                            >
-                                {seeding ? 'Seeding templates...' : 'Seed Document Templates'}
-                            </button>
-                        )}
                     </div>
                 )}
             </div>

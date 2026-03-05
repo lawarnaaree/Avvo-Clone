@@ -37,7 +37,7 @@ const PracticeAreas = () => {
                         <Link
                             to={`/search?topic=${area.title.toLowerCase().replace(/\s+/g, '-')}`}
                             key={index}
-                            className="practice-areas__card"
+                            className="practice-areas__card glass-card"
                             style={{ '--card-accent': area.color, animationDelay: `${index * 0.05}s` }}
                         >
                             <div className="practice-areas__icon" style={{ background: `${area.color}15`, color: area.color }}>

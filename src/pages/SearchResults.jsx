@@ -1,6 +1,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { lawyerService } from '../services/lawyerService';
+import Skeleton from '../components/Skeleton';
 import { FiMapPin, FiStar, FiFilter, FiCheckCircle, FiSearch } from 'react-icons/fi';
 import './SearchResults.css';
 
@@ -62,16 +63,14 @@ const SearchResults = () => {
         setSearchParams(newParams);
     };
 
-    if (loading) {
-        return <div className="search-results-page" style={{ textAlign: 'center', padding: '100px' }}><h2>Loading attorneys...</h2></div>;
-    }
+
 
     return (
         <div className="search-results-page">
             <div className="container">
                 <div className="search-results__layout">
                     {/* Sidebar Filters */}
-                    <aside className="search-results__sidebar">
+                    <aside className="search-results__sidebar glass-card">
                         <div className="filter-group">
                             <span className="filter-group__title"><FiFilter /> Cities</span>
                             <ul className="filter-list">
@@ -113,32 +112,52 @@ const SearchResults = () => {
 
                     {/* Results Content */}
                     <main className="search-results__content">
-                        <div className="search-results__header">
+                        <div className="search-results__header glass-card" style={{ padding: 'var(--space-md)', borderRadius: 'var(--border-radius-lg)', marginBottom: 'var(--space-lg)' }}>
                             <div>
                                 <h1 className="search-results__title">
                                     {issueQuery || topicQuery || 'All Lawyers'}
                                     {locationQuery ? ` in ${locationQuery}` : ' in Nepal'}
                                 </h1>
                                 <p className="search-results__count">
-                                    Found {filteredLawyers.length} top-rated attorneys
+                                    {loading ? <Skeleton width="150px" /> : `Found ${filteredLawyers.length} top-rated attorneys`}
                                 </p>
                             </div>
 
-                            <div className="search-results__sort">
-                                <label>Sort by:</label>
-                                <select
-                                    value={sortBy}
-                                    onChange={(e) => setSortBy(e.target.value)}
-                                    className="sort-select"
-                                >
-                                    <option value="rating">Top Rated</option>
-                                    <option value="reviews">Most Reviews</option>
-                                    <option value="newest">Newest</option>
-                                </select>
-                            </div>
+                            {!loading && (
+                                <div className="search-results__sort">
+                                    <label>Sort by:</label>
+                                    <select
+                                        value={sortBy}
+                                        onChange={(e) => setSortBy(e.target.value)}
+                                        className="sort-select"
+                                    >
+                                        <option value="rating">Top Rated</option>
+                                        <option value="reviews">Most Reviews</option>
+                                        <option value="newest">Newest</option>
+                                    </select>
+                                </div>
+                            )}
                         </div>
 
-                        {filteredLawyers.length > 0 ? (
+                        {loading ? (
+                            <div className="results-list">
+                                {[1, 2, 3].map(i => (
+                                    <div key={i} className="result-card glass-card">
+                                        <Skeleton height="80px" width="80px" borderRadius="12px" />
+                                        <div className="result-card__info" style={{ flex: 1 }}>
+                                            <Skeleton height="24px" width="40%" className="mb-sm" />
+                                            <Skeleton height="14px" width="20%" className="mb-sm" />
+                                            <Skeleton height="14px" width="30%" className="mb-sm" />
+                                            <Skeleton height="14px" width="90%" />
+                                        </div>
+                                        <div className="result-card__meta">
+                                            <Skeleton height="40px" width="60px" borderRadius="8px" className="mb-sm" />
+                                            <Skeleton height="40px" width="100%" borderRadius="8px" />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : filteredLawyers.length > 0 ? (
                             <div className="results-list">
                                 {filteredLawyers.map(lawyer => (
                                     <div key={lawyer.id} className="result-card">

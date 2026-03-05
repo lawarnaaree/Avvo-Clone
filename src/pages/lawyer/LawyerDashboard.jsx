@@ -3,6 +3,7 @@ import { Routes, Route, Link } from 'react-router-dom';
 import DashboardSidebar from './DashboardSidebar';
 import ProfileEditor from './ProfileEditor';
 import AnswerManager from './AnswerManager';
+import Skeleton from '../../components/Skeleton';
 import { qaService } from '../../services/qaService';
 import { useAuth } from '../../context/AuthContext';
 import { FiHome, FiUser, FiMessageSquare, FiSettings } from 'react-icons/fi';
@@ -37,21 +38,43 @@ const DashboardOverview = () => {
         <div className="dashboard-overview">
             <h2 className="dashboard-content__title">Dashboard Overview</h2>
             <div className="stats-grid">
-                <div className="stat-card">
-                    <span className="stat-label">Profile Views</span>
-                    <span className="stat-value">{stats.views}</span>
-                    <span className="stat-trend positive">+12% this week</span>
-                </div>
-                <div className="stat-card">
-                    <span className="stat-label">Questions Answered</span>
-                    <span className="stat-value">{stats.answers}</span>
-                    <span className="stat-trend">Impact in community</span>
-                </div>
-                <div className="stat-card">
-                    <span className="stat-label">Average Rating</span>
-                    <span className="stat-value">{stats.rating}</span>
-                    <span className="stat-trend positive">From {stats.answers + 5} reviews</span>
-                </div>
+                {loading ? (
+                    <>
+                        <div className="stat-card glass-card">
+                            <Skeleton height="14px" width="60%" className="mb-sm" />
+                            <Skeleton height="36px" width="40%" className="mb-sm" />
+                            <Skeleton height="14px" width="80%" />
+                        </div>
+                        <div className="stat-card glass-card">
+                            <Skeleton height="14px" width="60%" className="mb-sm" />
+                            <Skeleton height="36px" width="40%" className="mb-sm" />
+                            <Skeleton height="14px" width="80%" />
+                        </div>
+                        <div className="stat-card glass-card">
+                            <Skeleton height="14px" width="60%" className="mb-sm" />
+                            <Skeleton height="36px" width="40%" className="mb-sm" />
+                            <Skeleton height="14px" width="80%" />
+                        </div>
+                    </>
+                ) : (
+                    <>
+                        <div className="stat-card glass-card">
+                            <span className="stat-label">Profile Views</span>
+                            <span className="stat-value">{stats.views}</span>
+                            <span className="stat-trend positive">+12% this week</span>
+                        </div>
+                        <div className="stat-card glass-card">
+                            <span className="stat-label">Questions Answered</span>
+                            <span className="stat-value">{stats.answers}</span>
+                            <span className="stat-trend">Impact in community</span>
+                        </div>
+                        <div className="stat-card glass-card">
+                            <span className="stat-label">Average Rating</span>
+                            <span className="stat-value">{stats.rating}</span>
+                            <span className="stat-trend positive">From {stats.answers + 5} reviews</span>
+                        </div>
+                    </>
+                )}
             </div>
         </div>
     );

@@ -151,7 +151,7 @@ const FeaturedLawyers = () => {
                         </div>
                     ) : lawyers.length > 0 ? (
                         lawyers.map((lawyer) => (
-                            <div key={lawyer.id} className="lawyer-card">
+                            <div key={lawyer.id} className="lawyer-card glass-card">
                                 <div className="lawyer-card__top">
                                     <div className="lawyer-card__avatar" style={{ background: `linear-gradient(135deg, ${lawyer.color}, ${lawyer.color}cc)` }}>
                                         {lawyer.initials}
