@@ -3,6 +3,8 @@ import { Routes, Route, Link } from 'react-router-dom';
 import DashboardSidebar from './DashboardSidebar';
 import ProfileEditor from './ProfileEditor';
 import AnswerManager from './AnswerManager';
+import BookingsManager from './BookingsManager';
+import Messages from '../Messages';
 import Skeleton from '../../components/Skeleton';
 import { qaService } from '../../services/qaService';
 import { appointmentService } from '../../services/appointmentService';
