@@ -12,6 +12,8 @@ import DocumentBuilder from './pages/DocumentBuilder';
 import LawyerDashboard from './pages/lawyer/LawyerDashboard';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Messages from './pages/Messages';
+import UserDashboard from './pages/UserDashboard';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Navigate } from 'react-router-dom';
 import Lenis from 'lenis';
@@ -72,6 +74,8 @@ const App = () => {
           <Route path="/documents/:templateId" element={<DocumentBuilder />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/messages" element={<Messages />} />
+          <Route path="/dashboard/user" element={<UserDashboard />} />
 
           {/* Lawyer Dashboard Protected Routes */}
           <Route

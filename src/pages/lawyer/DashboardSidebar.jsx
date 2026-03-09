@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { FiGrid, FiUser, FiMessageSquare, FiSettings, FiExternalLink } from 'react-icons/fi';
+import { FiGrid, FiUser, FiMessageSquare, FiSettings, FiExternalLink, FiCalendar } from 'react-icons/fi';
 import './DashboardSidebar.css';
 
 const DashboardSidebar = () => {
@@ -18,6 +18,14 @@ const DashboardSidebar = () => {
                 <NavLink to="/dashboard/lawyer/answers" className={({ isActive }) => isActive ? 'sidebar-link active' : 'sidebar-link'}>
                     <FiMessageSquare className="sidebar-icon" />
                     <span>Manage Answers</span>
+                </NavLink>
+                <NavLink to="/dashboard/lawyer/messages" className={({ isActive }) => isActive ? 'sidebar-link active' : 'sidebar-link'}>
+                    <FiMessageSquare className="sidebar-icon" />
+                    <span>Messages</span>
+                </NavLink>
+                <NavLink to="/dashboard/lawyer/bookings" className={({ isActive }) => isActive ? 'sidebar-link active' : 'sidebar-link'}>
+                    <FiCalendar className="sidebar-icon" />
+                    <span>Manage Bookings</span>
                 </NavLink>
                 <NavLink to="/dashboard/lawyer/settings" className={({ isActive }) => isActive ? 'sidebar-link active' : 'sidebar-link'}>
                     <FiSettings className="sidebar-icon" />

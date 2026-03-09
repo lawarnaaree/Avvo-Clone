@@ -2,17 +2,21 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { lawyerService } from '../services/lawyerService';
 import { reviewService } from '../services/reviewService';
+import { appointmentService } from '../services/appointmentService';
 import { useAuth } from '../context/AuthContext';
-import { FiMapPin, FiStar, FiCheckCircle, FiPhone, FiMail, FiGlobe, FiCalendar, FiMessageSquare, FiUser } from 'react-icons/fi';
+import { FiMapPin, FiStar, FiCheckCircle, FiPhone, FiMail, FiGlobe, FiCalendar, FiMessageSquare, FiUser, FiX } from 'react-icons/fi';
 import './LawyerProfile.css';
 
 const LawyerProfile = () => {
     const { id } = useParams();
     const { user } = useAuth();
+    const navigate = useNavigate();
     const [lawyer, setLawyer] = useState(null);
     const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
+    const [showBookingModal, setShowBookingModal] = useState(false);
+    const [bookingData, setBookingData] = useState({ date: '', time: '' });
 
     // Review form state
     const [showReviewForm, setShowReviewForm] = useState(false);
@@ -49,7 +53,6 @@ const LawyerProfile = () => {
                 verified: true
             });
 
-            // Calculate & update new average rating
             const updatedReviews = await reviewService.getReviewsByLawyerId(id);
             const totalRating = updatedReviews.reduce((sum, r) => sum + r.rating, 0);
             const avgRating = totalRating / updatedReviews.length;
@@ -59,9 +62,41 @@ const LawyerProfile = () => {
             setComment('');
             setRating(5);
             setShowReviewForm(false);
-            fetchData(); // Refresh both lawyer and reviews
+            fetchData();
         } catch (error) {
             alert("Error submitting review. Please try again.");
+        }
+        setSubmitting(false);
+    };
+
+    const handleMessageLawyer = () => {
+        if (!user) {
+            navigate('/login', { state: { from: `/lawyer/${id}` } });
+            return;
+        }
+        navigate(`/messages?lawyerId=${id}`);
+    };
+
+    const handleBookingSubmit = async (e) => {
+        e.preventDefault();
+        if (!user) {
+            navigate('/login', { state: { from: `/lawyer/${id}` } });
+            return;
+        }
+        setSubmitting(true);
+        try {
+            await appointmentService.bookAppointment({
+                lawyerId: id,
+                userId: user.uid,
+                userName: user.displayName || 'Client',
+                lawyerName: lawyer.name,
+                date: bookingData.date,
+                time: bookingData.time
+            });
+            alert("Consultation request sent successfully!");
+            setShowBookingModal(false);
+        } catch (error) {
+            alert("Error booking appointment. Please try again.");
         }
         setSubmitting(false);
     };
@@ -221,13 +256,64 @@ const LawyerProfile = () => {
                                     <FiGlobe /> www.lawarnalawoffice.com.np
                                 </div>
                             </div>
-                            <button className="btn btn-primary" style={{ width: '100%', marginTop: '1rem' }}>
-                                Message Lawyer
-                            </button>
+                            <div className="contact-actions">
+                                <button
+                                    className="btn btn-primary"
+                                    style={{ width: '100%', marginBottom: '0.8rem' }}
+                                    onClick={handleMessageLawyer}
+                                >
+                                    Message Lawyer
+                                </button>
+                                <button
+                                    className="btn btn-secondary"
+                                    style={{ width: '100%' }}
+                                    onClick={() => setShowBookingModal(true)}
+                                >
+                                    Book Consultation
+                                </button>
+                            </div>
                         </div>
                     </aside>
                 </div>
             </div>
+
+            {showBookingModal && (
+                <div className="modal-overlay">
+                    <div className="modal-content glass-card p-lg">
+                        <button className="modal-close" onClick={() => setShowBookingModal(false)}><FiX /></button>
+                        <h2 className="modal-title">Book a Consultation</h2>
+                        <p className="modal-subtitle">Request a session with {lawyer.name}</p>
+
+                        <form onSubmit={handleBookingSubmit} className="booking-form mt-md">
+                            <div className="form-group">
+                                <label>Preferred Date</label>
+                                <input
+                                    type="date"
+                                    required
+                                    min={new Date().toISOString().split('T')[0]}
+                                    value={bookingData.date}
+                                    onChange={(e) => setBookingData({ ...bookingData, date: e.target.value })}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Preferred Time</label>
+                                <input
+                                    type="time"
+                                    required
+                                    value={bookingData.time}
+                                    onChange={(e) => setBookingData({ ...bookingData, time: e.target.value })}
+                                />
+                            </div>
+                            <div className="modal-actions mt-lg">
+                                <button type="button" className="btn" onClick={() => setShowBookingModal(false)}>Cancel</button>
+                                <button type="submit" className="btn btn-primary" disabled={submitting}>
+                                    {submitting ? 'Requesting...' : 'Request Appointment'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

@@ -74,6 +74,13 @@ const Navbar = () => {
                             </Link>
                         </li>
                     )}
+                    {user && !isLawyer && (
+                        <li className="navbar__link-item">
+                            <Link to="/dashboard/user" className="navbar__link" style={{ color: 'var(--color-primary)', fontWeight: '800' }}>
+                                My Dashboard
+                            </Link>
+                        </li>
+                    )}
                 </ul>
 
                 {/* Right Side */}

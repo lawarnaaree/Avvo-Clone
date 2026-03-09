@@ -5,6 +5,7 @@ import ProfileEditor from './ProfileEditor';
 import AnswerManager from './AnswerManager';
 import Skeleton from '../../components/Skeleton';
 import { qaService } from '../../services/qaService';
+import { appointmentService } from '../../services/appointmentService';
 import { useAuth } from '../../context/AuthContext';
 import { FiHome, FiUser, FiMessageSquare, FiSettings } from 'react-icons/fi';
 import './LawyerDashboard.css';
@@ -13,18 +14,27 @@ import './LawyerDashboard.css';
 const DashboardOverview = () => {
     const { user } = useAuth();
     const [stats, setStats] = useState({
-        views: 124, // Mock for now
+        views: 124,
         answers: 0,
-        rating: 4.8 // Mock for now
+        bookings: 0,
+        rating: 4.8
     });
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchStats = async () => {
+            if (!user) return;
             try {
-                const qData = await qaService.getQuestions();
+                const [qData, aptData] = await Promise.all([
+                    qaService.getQuestions(),
+                    appointmentService.getLawyerAppointments(user.uid)
+                ]);
                 const answeredByMe = qData.filter(q => q.answeredBy === user?.uid || q.lawyerId === user?.uid);
-                setStats(prev => ({ ...prev, answers: answeredByMe.length }));
+                setStats(prev => ({
+                    ...prev,
+                    answers: answeredByMe.length,
+                    bookings: aptData.length
+                }));
             } catch (error) {
                 console.error("Error fetching stats:", error);
             } finally {
@@ -69,6 +79,11 @@ const DashboardOverview = () => {
                             <span className="stat-trend">Impact in community</span>
                         </div>
                         <div className="stat-card glass-card">
+                            <span className="stat-label">Pending Bookings</span>
+                            <span className="stat-value">{stats.bookings}</span>
+                            <span className="stat-trend neutral">Manage in bookings tab</span>
+                        </div>
+                        <div className="stat-card glass-card">
                             <span className="stat-label">Average Rating</span>
                             <span className="stat-value">{stats.rating}</span>
                             <span className="stat-trend positive">From {stats.answers + 5} reviews</span>
@@ -106,6 +121,8 @@ const LawyerDashboard = () => {
                             <Route path="/" element={<DashboardOverview />} />
                             <Route path="/profile" element={<ProfileEditor />} />
                             <Route path="/answers" element={<AnswerManager />} />
+                            <Route path="/messages" element={<Messages />} />
+                            <Route path="/bookings" element={<BookingsManager />} />
                             <Route path="/settings" element={<SectionPlaceholder title="Account Settings" />} />
                         </Routes>
                     </div>
