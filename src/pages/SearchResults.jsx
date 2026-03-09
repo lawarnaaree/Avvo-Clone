@@ -2,7 +2,7 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { lawyerService } from '../services/lawyerService';
 import Skeleton from '../components/Skeleton';
-import { FiMapPin, FiStar, FiFilter, FiCheckCircle, FiSearch } from 'react-icons/fi';
+import { FiMapPin, FiStar, FiFilter, FiCheckCircle, FiSearch, FiGlobe } from 'react-icons/fi';
 import './SearchResults.css';
 
 const SearchResults = () => {
@@ -12,6 +12,7 @@ const SearchResults = () => {
     const [sortBy, setSortBy] = useState('rating');
 
     const issueQuery = searchParams.get('issue') || '';
+    const topicQuery = searchParams.get('topic') || '';
     const locationQuery = searchParams.get('location') || '';
     const experienceQuery = searchParams.get('experience') || '';
     const languageQuery = searchParams.get('languages') || '';
@@ -19,8 +20,13 @@ const SearchResults = () => {
     useEffect(() => {
         const fetchLawyers = async () => {
             setLoading(true);
-            const data = await lawyerService.getAllLawyers();
-            setLawyers(data);
+            try {
+                const data = await lawyerService.getAllLawyers();
+                setLawyers(data || []);
+            } catch (error) {
+                console.error("Error fetching lawyers:", error);
+                setLawyers([]);
+            }
             setLoading(false);
         };
         fetchLawyers();
@@ -28,19 +34,21 @@ const SearchResults = () => {
 
     // Advanced filtering and sorting logic
     const filteredLawyers = useMemo(() => {
+        if (!Array.isArray(lawyers)) return [];
+
         let results = lawyers.filter(lawyer => {
-            const searchTerm = (issueQuery || topicQuery).toLowerCase();
+            const searchTerm = (issueQuery || topicQuery || '').toLowerCase();
             const matchesKeyword = !searchTerm ||
-                lawyer.specialty.toLowerCase().includes(searchTerm) ||
-                lawyer.detailedSpecialty.toLowerCase().includes(searchTerm) ||
-                lawyer.name.toLowerCase().includes(searchTerm) ||
-                lawyer.bio.toLowerCase().includes(searchTerm);
+                lawyer.specialty?.toLowerCase().includes(searchTerm) ||
+                lawyer.detailedSpecialty?.toLowerCase().includes(searchTerm) ||
+                lawyer.name?.toLowerCase().includes(searchTerm) ||
+                lawyer.bio?.toLowerCase().includes(searchTerm);
 
             const matchesLocation = !locationQuery ||
-                lawyer.city.toLowerCase().includes(locationQuery.toLowerCase());
+                lawyer.city?.toLowerCase().includes(locationQuery.toLowerCase());
 
             const matchesExperience = !experienceQuery ||
-                (experienceQuery === '10+' ? parseInt(lawyer.experience) >= 10 : parseInt(lawyer.experience) >= parseInt(experienceQuery));
+                (experienceQuery === '10+' ? parseInt(lawyer.experience || 0) >= 10 : parseInt(lawyer.experience || 0) >= parseInt(experienceQuery));
 
             const matchesLanguage = !languageQuery ||
                 lawyer.languages?.some(l => l.toLowerCase() === languageQuery.toLowerCase());
@@ -50,18 +58,27 @@ const SearchResults = () => {
 
         // Apply Sorting
         return [...results].sort((a, b) => {
-            if (sortBy === 'rating') return b.rating - a.rating;
+            if (sortBy === 'rating') return (b.rating || 0) - (a.rating || 0);
             if (sortBy === 'reviews') return (b.reviewCount || 0) - (a.reviewCount || 0);
-            if (sortBy === 'newest') return b.createdAt?.seconds - a.createdAt?.seconds;
+            if (sortBy === 'newest') return (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0);
             return 0;
         });
-    }, [issueQuery, locationQuery, topicQuery, experienceQuery, languageQuery, lawyers, sortBy]);
+    }, [issueQuery, topicQuery, locationQuery, experienceQuery, languageQuery, lawyers, sortBy]);
 
-    const cities = useMemo(() => [...new Set(lawyers.map(l => l.city))], [lawyers]);
-    const specialties = useMemo(() => [...new Set(lawyers.map(l => l.specialty))], [lawyers]);
+    const cities = useMemo(() => {
+        if (!Array.isArray(lawyers)) return [];
+        return [...new Set(lawyers.map(l => l.city).filter(Boolean))];
+    }, [lawyers]);
+
+    const specialties = useMemo(() => {
+        if (!Array.isArray(lawyers)) return [];
+        return [...new Set(lawyers.map(l => l.specialty).filter(Boolean))];
+    }, [lawyers]);
+
     const languages = useMemo(() => {
+        if (!Array.isArray(lawyers)) return [];
         const all = lawyers.flatMap(l => l.languages || []);
-        return [...new Set(all)];
+        return [...new Set(all.filter(Boolean))];
     }, [lawyers]);
 
     const toggleFilter = (key, value) => {

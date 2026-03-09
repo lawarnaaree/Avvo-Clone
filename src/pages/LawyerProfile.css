@@ -278,7 +278,7 @@
     border-radius: 12px;
     color: #e67700;
     font-weight: 900;
-    box-shadow: 0 4px 12px rgba(2fab005, 0.1);
+    box-shadow: 0 4px 12px rgba(250, 176, 5, 0.15);
 }
 
 .review-card__text {
