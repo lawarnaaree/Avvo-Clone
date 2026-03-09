@@ -25,12 +25,16 @@ const LawyerProfile = () => {
 
     const fetchData = async () => {
         setLoading(true);
-        const [lawyerData, reviewData] = await Promise.all([
-            lawyerService.getLawyerById(id),
-            reviewService.getReviewsByLawyerId(id)
-        ]);
-        setLawyer(lawyerData);
-        setReviews(reviewData);
+        try {
+            const [lawyerData, reviewData] = await Promise.all([
+                lawyerService.getLawyerById(id),
+                reviewService.getLawyerReviews(id)
+            ]);
+            setLawyer(lawyerData);
+            setReviews(reviewData);
+        } catch (err) {
+            console.error("Error fetching lawyer profile data:", err);
+        }
         setLoading(false);
     };
 
@@ -53,17 +57,15 @@ const LawyerProfile = () => {
                 verified: true
             });
 
-            const updatedReviews = await reviewService.getReviewsByLawyerId(id);
-            const totalRating = updatedReviews.reduce((sum, r) => sum + r.rating, 0);
-            const avgRating = totalRating / updatedReviews.length;
-
-            await lawyerService.updateLawyerRating(id, avgRating, updatedReviews.length);
-
             setComment('');
             setRating(5);
             setShowReviewForm(false);
-            fetchData();
+
+            // Re-fetch to show new review and updated rating
+            await fetchData();
+            alert("Review posted successfully! Thank you for your feedback.");
         } catch (error) {
+            console.error("Error submitting review:", error);
             alert("Error submitting review. Please try again.");
         }
         setSubmitting(false);

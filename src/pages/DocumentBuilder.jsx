@@ -4,6 +4,7 @@ import { FiArrowLeft, FiArrowRight, FiCheck, FiDownload, FiFileText, FiEye } fro
 import { documentService } from '../services/documentService';
 import { useAuth } from '../context/AuthContext';
 import './DocumentBuilder.css';
+import { jsPDF } from 'jspdf';
 
 const DocumentBuilder = () => {
     const { templateId } = useParams();
@@ -13,6 +14,8 @@ const DocumentBuilder = () => {
     const [currentStep, setCurrentStep] = useState(0);
     const [answers, setAnswers] = useState({});
     const [isComplete, setIsComplete] = useState(false);
+    const [saving, setSaving] = useState(false);
+    const [saved, setSaved] = useState(false);
 
     useEffect(() => {
         const fetchTemplate = async () => {
@@ -77,6 +80,53 @@ const DocumentBuilder = () => {
         return text;
     };
 
+    const handleExportPDF = () => {
+        const doc = new jsPDF();
+        let text = template.templateText || '';
+
+        // Process text for PDF (strip HTML tags first but keep structure)
+        fields.forEach(field => {
+            const value = answers[field.key] || `[${field.label}]`;
+            text = text.replaceAll(`{{${field.key}}}`, value);
+        });
+
+        // Clean HTML tags and handle line breaks
+        const cleanText = text
+            .replace(/<\/h2>/g, '\n\n')
+            .replace(/<\/p>/g, '\n\n')
+            .replace(/<br\s*\/?>/g, '\n')
+            .replace(/<[^>]*>/g, '');
+
+        const splitText = doc.splitTextToSize(cleanText, 180);
+        doc.setFontSize(12);
+        doc.text(splitText, 15, 20);
+        doc.save(`${template.name.replace(/\s+/g, '_')}.pdf`);
+    };
+
+    const handleSave = async () => {
+        if (!user) {
+            alert("Please sign in to save your documents.");
+            return;
+        }
+
+        setSaving(true);
+        try {
+            await documentService.saveUserDocument(user.uid, {
+                templateId: template.id,
+                templateName: template.name,
+                answers: answers,
+                status: 'draft'
+            });
+            setSaved(true);
+            setTimeout(() => setSaved(false), 3000);
+        } catch (error) {
+            console.error("Error saving document:", error);
+            alert("Failed to save document. Please try again.");
+        } finally {
+            setSaving(false);
+        }
+    };
+
     const handleDownload = () => {
         let text = template.templateText || '';
         fields.forEach(field => {
@@ -84,7 +134,6 @@ const DocumentBuilder = () => {
             text = text.replaceAll(`{{${field.key}}}`, value);
         });
 
-        // Strip HTML for plain text download
         const cleanText = text.replace(/<[^>]*>/g, '');
         const blob = new Blob([cleanText], { type: 'text/plain;charset=utf-8' });
         const url = URL.createObjectURL(blob);
@@ -134,8 +183,11 @@ const DocumentBuilder = () => {
                                 <button className="builder-btn builder-btn--secondary" onClick={handleBack}>
                                     <FiArrowLeft /> Edit Answers
                                 </button>
-                                <button className="builder-btn builder-btn--accent" onClick={handleDownload}>
-                                    <FiDownload /> Download Document
+                                <button className="builder-btn builder-btn--primary" onClick={handleSave} disabled={saving}>
+                                    <FiCheck /> {saving ? 'Saving...' : saved ? 'Saved!' : 'Save to My Docs'}
+                                </button>
+                                <button className="builder-btn builder-btn--accent" onClick={handleExportPDF}>
+                                    <FiDownload /> Export as PDF
                                 </button>
                             </div>
                         </div>

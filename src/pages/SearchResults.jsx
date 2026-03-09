@@ -13,7 +13,8 @@ const SearchResults = () => {
 
     const issueQuery = searchParams.get('issue') || '';
     const locationQuery = searchParams.get('location') || '';
-    const topicQuery = searchParams.get('topic') || '';
+    const experienceQuery = searchParams.get('experience') || '';
+    const languageQuery = searchParams.get('languages') || '';
 
     useEffect(() => {
         const fetchLawyers = async () => {
@@ -38,7 +39,13 @@ const SearchResults = () => {
             const matchesLocation = !locationQuery ||
                 lawyer.city.toLowerCase().includes(locationQuery.toLowerCase());
 
-            return matchesKeyword && matchesLocation;
+            const matchesExperience = !experienceQuery ||
+                (experienceQuery === '10+' ? parseInt(lawyer.experience) >= 10 : parseInt(lawyer.experience) >= parseInt(experienceQuery));
+
+            const matchesLanguage = !languageQuery ||
+                lawyer.languages?.some(l => l.toLowerCase() === languageQuery.toLowerCase());
+
+            return matchesKeyword && matchesLocation && matchesExperience && matchesLanguage;
         });
 
         // Apply Sorting
@@ -48,10 +55,14 @@ const SearchResults = () => {
             if (sortBy === 'newest') return b.createdAt?.seconds - a.createdAt?.seconds;
             return 0;
         });
-    }, [issueQuery, locationQuery, topicQuery, lawyers, sortBy]);
+    }, [issueQuery, locationQuery, topicQuery, experienceQuery, languageQuery, lawyers, sortBy]);
 
     const cities = useMemo(() => [...new Set(lawyers.map(l => l.city))], [lawyers]);
     const specialties = useMemo(() => [...new Set(lawyers.map(l => l.specialty))], [lawyers]);
+    const languages = useMemo(() => {
+        const all = lawyers.flatMap(l => l.languages || []);
+        return [...new Set(all)];
+    }, [lawyers]);
 
     const toggleFilter = (key, value) => {
         const newParams = new URLSearchParams(searchParams);
@@ -62,8 +73,6 @@ const SearchResults = () => {
         }
         setSearchParams(newParams);
     };
-
-
 
     return (
         <div className="search-results-page">
@@ -103,6 +112,42 @@ const SearchResults = () => {
                                             <span className="filter-count">
                                                 ({lawyers.filter(l => l.specialty === spec).length})
                                             </span>
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+
+                        <div className="filter-group">
+                            <span className="filter-group__title"><FiStar /> Experience</span>
+                            <ul className="filter-list">
+                                {[
+                                    { label: '5+ Years', value: '5' },
+                                    { label: '10+ Years', value: '10' },
+                                    { label: '15+ Years', value: '15' }
+                                ].map(exp => (
+                                    <li key={exp.value} className="filter-item">
+                                        <button
+                                            className={`filter-link ${experienceQuery === exp.value ? 'filter-link--active' : ''}`}
+                                            onClick={() => toggleFilter('experience', exp.value)}
+                                        >
+                                            {exp.label}
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+
+                        <div className="filter-group">
+                            <span className="filter-group__title"><FiGlobe /> Languages</span>
+                            <ul className="filter-list">
+                                {languages.map(lang => (
+                                    <li key={lang} className="filter-item">
+                                        <button
+                                            className={`filter-link ${languageQuery.toLowerCase() === lang.toLowerCase() ? 'filter-link--active' : ''}`}
+                                            onClick={() => toggleFilter('languages', lang)}
+                                        >
+                                            {lang}
                                         </button>
                                     </li>
                                 ))}

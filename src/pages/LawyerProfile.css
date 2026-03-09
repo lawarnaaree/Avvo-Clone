@@ -221,6 +221,11 @@
 .review-card {
     padding: var(--space-xl) 0;
     border-bottom: 1px solid #f1f3f5;
+    transition: transform 0.2s ease;
+}
+
+.review-card:hover {
+    transform: translateX(5px);
 }
 
 .review-card:last-child {
@@ -243,22 +248,24 @@
 .user-avatar {
     width: 48px;
     height: 48px;
-    background: #e9ecef;
-    border-radius: 12px;
+    background: var(--color-primary-light);
+    border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--color-gray-500);
+    color: var(--color-primary);
+    font-size: 1.2rem;
 }
 
 .user-name {
     font-weight: 800;
     color: var(--color-black);
     display: block;
+    font-size: 1.05rem;
 }
 
 .review-date {
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     color: var(--color-gray-500);
 }
 
@@ -267,15 +274,17 @@
     align-items: center;
     gap: 6px;
     background: #fff9db;
-    padding: 6px 12px;
-    border-radius: 10px;
+    padding: 6px 14px;
+    border-radius: 12px;
     color: #e67700;
-    font-weight: 800;
+    font-weight: 900;
+    box-shadow: 0 4px 12px rgba(2fab005, 0.1);
 }
 
 .review-card__text {
     color: #495057;
-    line-height: 1.7;
+    line-height: 1.8;
+    font-size: 1.05rem;
 }
 
 /* Sidebar Contact */
