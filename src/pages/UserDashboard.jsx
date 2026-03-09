@@ -14,18 +14,35 @@ const UserDashboard = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        let isMounted = true;
+
         if (user) {
             const fetchData = async () => {
-                const [aptData, docData] = await Promise.all([
-                    appointmentService.getUserAppointments(user.uid),
-                    documentService.getUserDocuments(user.uid)
-                ]);
-                setAppointments(aptData);
-                setDocuments(docData);
-                setLoading(false);
+                setLoading(true);
+                try {
+                    const [aptData, docData] = await Promise.all([
+                        appointmentService.getUserAppointments(user.uid),
+                        documentService.getUserDocuments(user.uid)
+                    ]);
+
+                    if (isMounted) {
+                        setAppointments(aptData || []);
+                        setDocuments(docData || []);
+                    }
+                } catch (error) {
+                    console.error("Dashboard data fetch error:", error);
+                } finally {
+                    if (isMounted) {
+                        setLoading(false);
+                    }
+                }
             };
             fetchData();
+        } else {
+            setLoading(false);
         }
+
+        return () => { isMounted = false; };
     }, [user]);
 
     if (loading) return <div className="user-dashboard container"><h2>Loading your dashboard...</h2></div>;

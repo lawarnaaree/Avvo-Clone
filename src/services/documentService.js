@@ -33,12 +33,17 @@ export const documentService = {
     },
 
     async getUserDocuments(userId) {
-        const q = query(
-            collection(db, USER_DOCS_COLLECTION),
-            where('userId', '==', userId),
-            orderBy('createdAt', 'desc')
-        );
-        const snap = await getDocs(q);
-        return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        try {
+            const q = query(
+                collection(db, USER_DOCS_COLLECTION),
+                where('userId', '==', userId),
+                orderBy('createdAt', 'desc')
+            );
+            const snap = await getDocs(q);
+            return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        } catch (error) {
+            console.error("Error fetching user documents:", error);
+            return [];
+        }
     }
 };
