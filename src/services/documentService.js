@@ -45,5 +45,21 @@ export const documentService = {
             console.error("Error fetching user documents:", error);
             return [];
         }
+    },
+
+    async getAdminDocument(adminId) {
+        try {
+            const p = query(
+                collection(db, ADMIN_DOCS_COLLECTION),
+                where("adminId", "==", adminId),
+                orderBy('createdAt', 'desc')
+            );
+            const snap = await getDocs(p);
+            return snap.docs.map(d => ({ id: d.id, ...d.data() }))
+        }
+        catch (error) {
+            console.error("Error while fetching data admin document : ", error);
+            return [];
+        }
     }
 };
