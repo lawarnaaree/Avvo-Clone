@@ -7,11 +7,13 @@ import './Navbar.css';
 const Navbar = () => {
     const [scrolled, setScrolled] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
     const { user, logout, isLawyer } = useAuth();
     const navigate = useNavigate();
 
     const handleLogout = async () => {
         try {
+            setShowLogoutModal(false);
             await logout();
             navigate('/');
         } catch (err) {
@@ -91,7 +93,7 @@ const Navbar = () => {
                     {user ? (
                         <div className="navbar__user">
                             <span className="navbar__user-name"><FiUser /> {user.displayName || 'User'}</span>
-                            <button onClick={handleLogout} className="navbar__logout-btn" title="Logout">
+                            <button onClick={() => setShowLogoutModal(true)} className="navbar__logout-btn" title="Logout">
                                 <FiLogOut />
                             </button>
                         </div>
@@ -129,7 +131,7 @@ const Navbar = () => {
                             <div className="navbar__mobile-user">
                                 <FiUser /> {user.displayName || user.email}
                             </div>
-                            <button onClick={handleLogout} className="btn btn-secondary" style={{ width: '100%' }}>
+                            <button onClick={() => { setMobileOpen(false); setShowLogoutModal(true); }} className="btn btn-secondary" style={{ width: '100%' }}>
                                 <FiLogOut /> Logout
                             </button>
                         </div>
@@ -141,6 +143,21 @@ const Navbar = () => {
                     )}
                 </div>
             </div>
+
+            {/* Logout Confirmation Modal */}
+            {showLogoutModal && (
+                <div className="logout-overlay" onClick={() => setShowLogoutModal(false)}>
+                    <div className="logout-modal" onClick={(e) => e.stopPropagation()}>
+                        <div className="logout-modal__emoji">👋</div>
+                        <h3 className="logout-modal__title">Leaving so soon?</h3>
+                        <p className="logout-modal__text">Are you sure you want to log out?</p>
+                        <div className="logout-modal__actions">
+                            <button className="logout-modal__btn logout-modal__btn--cancel" onClick={() => setShowLogoutModal(false)}>Stay</button>
+                            <button className="logout-modal__btn logout-modal__btn--confirm" onClick={handleLogout}>Yes, Log Out</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </nav>
     );
 };
