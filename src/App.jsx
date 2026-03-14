@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -17,6 +17,9 @@ import UserDashboard from './pages/UserDashboard';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Navigate } from 'react-router-dom';
 import Lenis from 'lenis';
+
+// Global Lenis instance so ScrollToTop can access it
+let lenisInstance = null;
 
 // Protected Route Component
 const ProtectedRoute = ({ children, requireLawyer = false }) => {
@@ -40,7 +43,12 @@ const ScrollToTop = () => {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    // Use Lenis if available, otherwise fall back to native scroll
+    if (lenisInstance) {
+      lenisInstance.scrollTo(0, { immediate: true });
+    } else {
+      window.scrollTo(0, 0);
+    }
   }, [pathname]);
 
   return null;
@@ -50,6 +58,7 @@ const App = () => {
   useEffect(() => {
     // Initialize Lenis for smooth scrolling
     const lenis = new Lenis();
+    lenisInstance = lenis;
 
     function raf(time) {
       lenis.raf(time);
@@ -57,6 +66,11 @@ const App = () => {
     }
 
     requestAnimationFrame(raf);
+
+    return () => {
+      lenis.destroy();
+      lenisInstance = null;
+    };
   }, []);
 
   return (
