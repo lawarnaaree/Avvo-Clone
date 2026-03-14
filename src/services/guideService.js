@@ -48,17 +48,5 @@ export const guideService = {
             console.error("Error fetching guide by ID:", error);
             return null;
         }
-    },
-
-    // Seed mock data to Firestore
-    seedMockGuides: async () => {
-        try {
-            const guidesRef = collection(db, COLLECTION_NAME);
-            // Seeding logic removed as mock data is gone
-            return true;
-        } catch (error) {
-            console.error("Error seeding guides:", error);
-            throw error;
-        }
     }
 };

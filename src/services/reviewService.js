@@ -5,10 +5,12 @@ import {
     query,
     where,
     orderBy,
+    limit,
     serverTimestamp,
     doc,
     updateDoc,
-    getDoc
+    getDoc,
+    getCountFromServer
 } from 'firebase/firestore';
 import { db } from '../backend/firebase';
 
@@ -52,6 +54,37 @@ export const reviewService = {
         }
     },
 
+    // Get all reviews (for homepage ReviewsSection)
+    getAllReviews: async (limitCount = 6) => {
+        try {
+            const q = query(
+                collection(db, COLLECTION_NAME),
+                orderBy('createdAt', 'desc'),
+                limit(limitCount)
+            );
+            const querySnapshot = await getDocs(q);
+            return querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+        } catch (error) {
+            console.error("Error fetching all reviews:", error);
+            return [];
+        }
+    },
+
+    // Get total review count
+    getReviewCount: async () => {
+        try {
+            const coll = collection(db, COLLECTION_NAME);
+            const snapshot = await getCountFromServer(coll);
+            return snapshot.data().count;
+        } catch (error) {
+            console.error("Error getting review count:", error);
+            return 0;
+        }
+    },
+
     // Recalculate lawyer's average rating and review count
     updateLawyerStats: async (lawyerId) => {
         try {
@@ -75,3 +108,4 @@ export const reviewService = {
         }
     }
 };
+

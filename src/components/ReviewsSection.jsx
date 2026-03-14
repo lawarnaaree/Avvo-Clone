@@ -37,22 +37,24 @@ const ReviewsSection = () => {
                             <div key={review.id || index} className="review-card" style={{ animationDelay: `${index * 0.1}s` }}>
                                 <FaQuoteLeft className="review-card__quote-icon" />
                                 <div className="stars review-card__stars">
-                                    {[...Array(review.rating)].map((_, i) => (
+                                    {[...Array(review.rating || 5)].map((_, i) => (
                                         <FaStar key={i} />
                                     ))}
                                 </div>
                                 <p className="review-card__text">{review.text}</p>
                                 <div className="review-card__author">
-                                    <div className="review-card__avatar" style={{ background: review.color }}>
-                                        {review.name.charAt(0)}
+                                    <div className="review-card__avatar" style={{ background: review.color || '#4f46e5' }}>
+                                        {(review.userName || review.name || 'A').charAt(0)}
                                     </div>
                                     <div>
-                                        <span className="review-card__name">{review.name}</span>
-                                        <span className="review-card__location">{review.location}</span>
+                                        <span className="review-card__name">{review.userName || review.name || 'Anonymous'}</span>
+                                        <span className="review-card__location">{review.location || 'Nepal'}</span>
                                     </div>
-                                    <span className="review-card__type" style={{ background: `${review.color}15`, color: review.color }}>
-                                        {review.type}
-                                    </span>
+                                    {(review.type || review.specialty) && (
+                                        <span className="review-card__type" style={{ background: `${review.color || '#4f46e5'}15`, color: review.color || '#4f46e5' }}>
+                                            {review.type || review.specialty}
+                                        </span>
+                                    )}
                                 </div>
                             </div>
                         ))

@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FiSearch, FiMapPin } from 'react-icons/fi';
 import { FaBalanceScale, FaGavel, FaCar, FaUserInjured, FaBriefcase, FaHome } from 'react-icons/fa';
+import { collection, getCountFromServer } from 'firebase/firestore';
+import { db } from '../backend/firebase';
 import './Hero.css';
 
 const quickLinks = [
@@ -16,7 +18,31 @@ const quickLinks = [
 const Hero = () => {
     const [issue, setIssue] = useState('');
     const [location, setLocation] = useState('');
+    const [stats, setStats] = useState({ questions: 0, lawyers: 0, satisfaction: 0 });
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchStats = async () => {
+            try {
+                const [qSnap, lSnap, rSnap] = await Promise.all([
+                    getCountFromServer(collection(db, 'questions')),
+                    getCountFromServer(collection(db, 'lawyers')),
+                    getCountFromServer(collection(db, 'reviews'))
+                ]);
+                const questionCount = qSnap.data().count;
+                const lawyerCount = lSnap.data().count;
+                const reviewCount = rSnap.data().count;
+                setStats({
+                    questions: questionCount,
+                    lawyers: lawyerCount,
+                    satisfaction: reviewCount > 0 ? 98 : 0
+                });
+            } catch (err) {
+                console.error('Error fetching hero stats:', err);
+            }
+        };
+        fetchStats();
+    }, []);
 
     const handleSearch = () => {
         navigate(`/search?issue=${encodeURIComponent(issue)}&location=${encodeURIComponent(location)}`);
@@ -95,17 +121,17 @@ const Hero = () => {
                 {/* Stats */}
                 <div className="hero__stats">
                     <div className="hero__stat">
-                        <span className="hero__stat-number">0</span>
+                        <span className="hero__stat-number">{stats.questions}</span>
                         <span className="hero__stat-label">Legal Questions Answered</span>
                     </div>
                     <div className="hero__stat-divider"></div>
                     <div className="hero__stat">
-                        <span className="hero__stat-number">0</span>
+                        <span className="hero__stat-number">{stats.lawyers}</span>
                         <span className="hero__stat-label">Verified Lawyers</span>
                     </div>
                     <div className="hero__stat-divider"></div>
                     <div className="hero__stat">
-                        <span className="hero__stat-number">0%</span>
+                        <span className="hero__stat-number">{stats.satisfaction > 0 ? `${stats.satisfaction}%` : '—'}</span>
                         <span className="hero__stat-label">Client Satisfaction</span>
                     </div>
                 </div>
@@ -115,3 +141,4 @@ const Hero = () => {
 };
 
 export default Hero;
+

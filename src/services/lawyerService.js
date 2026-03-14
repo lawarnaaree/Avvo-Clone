@@ -119,17 +119,5 @@ export const lawyerService = {
             console.error("Error updating lawyer profile:", error);
             throw error;
         }
-    },
-
-    // Seed mock data to Firestore (Utility function)
-    seedMockData: async () => {
-        try {
-            const lawyersRef = collection(db, COLLECTION_NAME);
-            // Seeding logic removed as mock data is gone
-            return true;
-        } catch (error) {
-            console.error("Error seeding data:", error);
-            throw error;
-        }
     }
 };

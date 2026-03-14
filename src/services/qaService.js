@@ -85,17 +85,5 @@ export const qaService = {
             console.error("Error adding answer:", error);
             throw error;
         }
-    },
-
-    // Seed mock questions
-    seedMockQuestions: async () => {
-        try {
-            const questionsRef = collection(db, COLLECTION_NAME);
-            // Seeding logic removed as mock data is gone
-            return true;
-        } catch (error) {
-            console.error("Error seeding questions:", error);
-            throw error;
-        }
     }
 };

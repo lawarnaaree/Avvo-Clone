@@ -252,10 +252,10 @@ const LawyerProfile = () => {
                                     <FiPhone /> {lawyer.phone}
                                 </div>
                                 <div className="contact-info__item">
-                                    <FiMail /> contact@lawarna.law
+                                    <FiMail /> {lawyer.email || 'Not available'}
                                 </div>
                                 <div className="contact-info__item">
-                                    <FiGlobe /> www.lawarnalawoffice.com.np
+                                    <FiGlobe /> {lawyer.website || 'Not available'}
                                 </div>
                             </div>
                             <div className="contact-actions">
