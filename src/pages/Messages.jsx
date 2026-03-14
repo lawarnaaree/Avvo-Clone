@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { useSearchParams } from 'react-router-dom';
 import { messageService } from '../services/messageService';
 import { lawyerService } from '../services/lawyerService';
-import { FiSend, FiUser, FiSearch, FiMessageSquare } from 'react-icons/fi';
+import { FiSend, FiSearch, FiMessageSquare, FiSmile } from 'react-icons/fi';
 import './Messages.css';
 
 const Messages = () => {
@@ -16,6 +16,7 @@ const Messages = () => {
     const [newMessage, setNewMessage] = useState('');
     const [loading, setLoading] = useState(true);
     const [participants, setParticipants] = useState({});
+    const [searchTerm, setSearchTerm] = useState('');
     const messagesEndRef = useRef(null);
 
     useEffect(() => {
@@ -25,13 +26,11 @@ const Messages = () => {
             const convs = await messageService.getConversations(user.uid);
             setConversations(convs);
 
-            // Handle initiating a new conversation from lawyer profile
             if (lawyerId && lawyerId !== user.uid) {
                 const existingConv = convs.find(c => c.participants.includes(lawyerId));
                 if (existingConv) {
                     setActiveConv(existingConv);
                 } else {
-                    // Create a placeholder conversation object for the UI
                     const newConvId = messageService.getConversationId(user.uid, lawyerId);
                     const newConv = {
                         id: newConvId,
@@ -44,12 +43,10 @@ const Messages = () => {
                 }
             }
 
-            // Fetch names for participants
             const participantsData = { ...participants };
             for (const conv of convs) {
                 const otherPartyId = conv.participants.find(id => id !== user.uid);
                 if (!participantsData[otherPartyId]) {
-                    // Try to fetch as lawyer first, then user (simplified for now)
                     const lawyer = await lawyerService.getLawyerById(otherPartyId);
                     participantsData[otherPartyId] = lawyer ? lawyer.name : 'Client';
                 }
@@ -88,77 +85,138 @@ const Messages = () => {
         }
     };
 
-    if (loading) return <div className="messages-page container"><h2>Loading messages...</h2></div>;
+    const filteredConversations = conversations.filter(conv => {
+        if (!searchTerm.trim()) return true;
+        const otherPartyId = conv.participants.find(id => id !== user.uid);
+        const name = participants[otherPartyId] || '';
+        return name.toLowerCase().includes(searchTerm.toLowerCase());
+    });
+
+    if (loading) {
+        return (
+            <div className="msg-page">
+                <div className="msg-loading">
+                    <div className="msg-loading__spinner"></div>
+                    <p>Loading conversations...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <div className="messages-page container">
-            <div className="messages-container glass-card">
-                <aside className="conversations-sidebar">
-                    <div className="sidebar-header">
-                        <h3>Messages</h3>
-                        <div className="search-bar">
+        <div className="msg-page">
+            <div className="msg-shell">
+
+                {/* Sidebar */}
+                <aside className="msg-sidebar">
+                    <div className="msg-sidebar__top">
+                        <h2 className="msg-sidebar__title">Chats</h2>
+                        <div className="msg-sidebar__search">
                             <FiSearch />
-                            <input type="text" placeholder="Search chats..." />
+                            <input
+                                type="text"
+                                placeholder="Search conversations..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
                         </div>
                     </div>
-                    <div className="conversations-list">
-                        {conversations.length > 0 ? (
-                            conversations.map(conv => {
+                    <div className="msg-sidebar__list">
+                        {filteredConversations.length > 0 ? (
+                            filteredConversations.map(conv => {
                                 const otherPartyId = conv.participants.find(id => id !== user.uid);
+                                const name = participants[otherPartyId] || 'Loading...';
+                                const isActive = activeConv?.id === conv.id;
                                 return (
                                     <div
                                         key={conv.id}
-                                        className={`conversation-item ${activeConv?.id === conv.id ? 'active' : ''}`}
+                                        className={`msg-contact ${isActive ? 'msg-contact--active' : ''}`}
                                         onClick={() => setActiveConv(conv)}
                                     >
-                                        <div className="avatar">{participants[otherPartyId]?.[0] || 'C'}</div>
-                                        <div className="conv-info">
-                                            <div className="conv-name">{participants[otherPartyId] || 'Loading...'}</div>
-                                            <div className="conv-last">{conv.lastMessage}</div>
+                                        <div className="msg-contact__avatar">
+                                            {name[0] || 'C'}
                                         </div>
+                                        <div className="msg-contact__info">
+                                            <span className="msg-contact__name">{name}</span>
+                                            <span className="msg-contact__preview">{conv.lastMessage || 'Start a conversation...'}</span>
+                                        </div>
+                                        {isActive && <div className="msg-contact__indicator"></div>}
                                     </div>
                                 );
                             })
                         ) : (
-                            <div className="no-convs">No messages yet.</div>
+                            <div className="msg-sidebar__empty">
+                                <FiMessageSquare />
+                                <p>No conversations found</p>
+                            </div>
                         )}
                     </div>
                 </aside>
 
-                <main className="chat-window">
+                {/* Chat Area */}
+                <main className="msg-chat">
                     {activeConv ? (
                         <>
-                            <header className="chat-header">
-                                <div className="avatar">
+                            <header className="msg-chat__header">
+                                <div className="msg-chat__header-avatar">
                                     {participants[activeConv.participants.find(id => id !== user.uid)]?.[0] || 'C'}
                                 </div>
-                                <h4>{participants[activeConv.participants.find(id => id !== user.uid)]}</h4>
+                                <div className="msg-chat__header-info">
+                                    <h3>{participants[activeConv.participants.find(id => id !== user.uid)]}</h3>
+                                    <span className="msg-chat__header-status">
+                                        <span className="msg-online-dot"></span> Online
+                                    </span>
+                                </div>
                             </header>
-                            <div className="messages-list">
+
+                            <div className="msg-chat__body">
+                                {messages.length === 0 && (
+                                    <div className="msg-chat__start">
+                                        <div className="msg-chat__start-emoji">🤝</div>
+                                        <p>Start the conversation! Say hello to your lawyer.</p>
+                                    </div>
+                                )}
                                 {messages.map(msg => (
-                                    <div key={msg.id} className={`message-bubble ${msg.senderId === user.uid ? 'sent' : 'received'}`}>
-                                        <div className="bubble-content">{msg.text}</div>
-                                        <div className="bubble-time">
-                                            {msg.createdAt?.seconds ? new Date(msg.createdAt.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '...'}
+                                    <div key={msg.id} className={`msg-bubble ${msg.senderId === user.uid ? 'msg-bubble--sent' : 'msg-bubble--received'}`}>
+                                        <div className="msg-bubble__text">{msg.text}</div>
+                                        <div className="msg-bubble__time">
+                                            {msg.createdAt?.seconds
+                                                ? new Date(msg.createdAt.seconds * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                                                : '...'}
                                         </div>
                                     </div>
                                 ))}
                                 <div ref={messagesEndRef} />
                             </div>
-                            <form className="chat-input" onSubmit={handleSendMessage}>
+
+                            <form className="msg-chat__composer" onSubmit={handleSendMessage}>
+                                <button type="button" className="msg-chat__emoji-btn" title="Emoji">
+                                    <FiSmile />
+                                </button>
                                 <input
                                     type="text"
-                                    placeholder="Type a message..."
+                                    placeholder="Write a message..."
                                     value={newMessage}
                                     onChange={(e) => setNewMessage(e.target.value)}
                                 />
-                                <button type="submit" className="btn btn-primary"><FiSend /></button>
+                                <button
+                                    type="submit"
+                                    className={`msg-chat__send-btn ${newMessage.trim() ? 'msg-chat__send-btn--active' : ''}`}
+                                    disabled={!newMessage.trim()}
+                                >
+                                    <FiSend />
+                                </button>
                             </form>
                         </>
                     ) : (
-                        <div className="chat-placeholder">
-                            <FiMessageSquare size={48} />
-                            <p>Select a conversation to start chatting</p>
+                        <div className="msg-chat__empty">
+                            <div className="msg-chat__empty-visual">
+                                <div className="msg-chat__empty-circle msg-chat__empty-circle--1"></div>
+                                <div className="msg-chat__empty-circle msg-chat__empty-circle--2"></div>
+                                <div className="msg-chat__empty-icon">💬</div>
+                            </div>
+                            <h2>Your messages</h2>
+                            <p>Select a conversation from the sidebar to start chatting with your lawyer.</p>
                         </div>
                     )}
                 </main>

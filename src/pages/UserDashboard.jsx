@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { appointmentService } from '../services/appointmentService';
 import { documentService } from '../services/documentService';
-import { FiCalendar, FiClock, FiMessageSquare, FiUser, FiFileText, FiArrowRight } from 'react-icons/fi';
+import { FiCalendar, FiClock, FiMessageSquare, FiFileText, FiArrowRight, FiSearch, FiBookOpen, FiShield } from 'react-icons/fi';
 import { Link, useNavigate } from 'react-router-dom';
 import './UserDashboard.css';
 
@@ -45,87 +45,200 @@ const UserDashboard = () => {
         return () => { isMounted = false; };
     }, [user]);
 
-    if (loading) return <div className="user-dashboard container"><h2>Loading your dashboard...</h2></div>;
+    const getGreeting = () => {
+        const hour = new Date().getHours();
+        if (hour < 12) return 'Good morning';
+        if (hour < 17) return 'Good afternoon';
+        return 'Good evening';
+    };
+
+    const firstName = user?.displayName?.split(' ')[0] || 'there';
+
+    if (loading) {
+        return (
+            <div className="ud-page">
+                <div className="ud-container">
+                    <div className="ud-loading">
+                        <div className="ud-loading-spinner"></div>
+                        <p>Loading your dashboard...</p>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
-        <div className="user-dashboard container">
-            <header className="dashboard-header">
-                <h1>Welcome, {user.displayName || 'User'}</h1>
-                <p>Manage your legal consultations and messages</p>
-            </header>
+        <div className="ud-page">
+            <div className="ud-container">
 
-            <div className="dashboard-grid">
-                <section className="dashboard-section glass-card">
-                    <div className="section-header">
-                        <h2><FiCalendar /> Your Appointments</h2>
+                {/* Hero Greeting */}
+                <div className="ud-hero">
+                    <div className="ud-hero__content">
+                        <span className="ud-hero__wave">👋</span>
+                        <div>
+                            <h1 className="ud-hero__title">{getGreeting()}, {firstName}</h1>
+                            <p className="ud-hero__sub">Here's what's happening with your legal matters today.</p>
+                        </div>
                     </div>
-                    <div className="appointments-list">
-                        {appointments.length > 0 ? (
-                            appointments.map(apt => (
-                                <div key={apt.id} className={`appointment-item ${apt.status}`}>
-                                    <div className="apt-info">
-                                        <strong>{apt.lawyerName}</strong>
-                                        <div className="apt-meta">
-                                            <span><FiCalendar /> {apt.date}</span>
-                                            <span><FiClock /> {apt.time}</span>
-                                        </div>
-                                    </div>
-                                    <div className={`status-tag ${apt.status}`}>{apt.status}</div>
+                    <div className="ud-hero__date">
+                        {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+                    </div>
+                </div>
+
+                {/* Quick Stats */}
+                <div className="ud-stats">
+                    <div className="ud-stat-card" onClick={() => navigate('/search')}>
+                        <div className="ud-stat-card__icon ud-stat-card__icon--blue">
+                            <FiSearch />
+                        </div>
+                        <div className="ud-stat-card__info">
+                            <span className="ud-stat-card__label">Find Lawyers</span>
+                            <span className="ud-stat-card__desc">Browse attorneys</span>
+                        </div>
+                        <FiArrowRight className="ud-stat-card__arrow" />
+                    </div>
+                    <div className="ud-stat-card" onClick={() => navigate('/messages')}>
+                        <div className="ud-stat-card__icon ud-stat-card__icon--green">
+                            <FiMessageSquare />
+                        </div>
+                        <div className="ud-stat-card__info">
+                            <span className="ud-stat-card__label">Messages</span>
+                            <span className="ud-stat-card__desc">Chat with lawyers</span>
+                        </div>
+                        <FiArrowRight className="ud-stat-card__arrow" />
+                    </div>
+                    <div className="ud-stat-card" onClick={() => navigate('/documents')}>
+                        <div className="ud-stat-card__icon ud-stat-card__icon--purple">
+                            <FiBookOpen />
+                        </div>
+                        <div className="ud-stat-card__info">
+                            <span className="ud-stat-card__label">Documents</span>
+                            <span className="ud-stat-card__desc">{documents.length} saved</span>
+                        </div>
+                        <FiArrowRight className="ud-stat-card__arrow" />
+                    </div>
+                    <div className="ud-stat-card" onClick={() => navigate('/ask')}>
+                        <div className="ud-stat-card__icon ud-stat-card__icon--orange">
+                            <FiShield />
+                        </div>
+                        <div className="ud-stat-card__info">
+                            <span className="ud-stat-card__label">Ask a Lawyer</span>
+                            <span className="ud-stat-card__desc">Get legal advice</span>
+                        </div>
+                        <FiArrowRight className="ud-stat-card__arrow" />
+                    </div>
+                </div>
+
+                {/* Main Content Grid */}
+                <div className="ud-grid">
+
+                    {/* Appointments Panel */}
+                    <section className="ud-panel ud-panel--appointments">
+                        <div className="ud-panel__header">
+                            <div className="ud-panel__title-group">
+                                <div className="ud-panel__icon-wrap ud-panel__icon-wrap--blue">
+                                    <FiCalendar />
                                 </div>
-                            ))
-                        ) : (
-                            <div className="empty-state">
-                                <p>No appointments booked yet.</p>
-                                <Link to="/search" className="btn btn-primary btn-sm mt-md" style={{ display: 'inline-block' }}>Find a Lawyer</Link>
+                                <h2 className="ud-panel__title">Your Appointments</h2>
                             </div>
-                        )}
-                    </div>
-                </section>
-
-                <section className="dashboard-section glass-card">
-                    <div className="section-header">
-                        <h2><FiFileText /> My Documents</h2>
-                        <Link to="/documents" className="view-all">Browse Library</Link>
-                    </div>
-                    <div className="documents-list">
-                        {documents.length > 0 ? (
-                            documents.map(doc => (
-                                <div key={doc.id} className="user-doc-item">
-                                    <div className="user-doc-info">
-                                        <FiFileText className="user-doc-icon" />
-                                        <div>
-                                            <strong>{doc.templateName}</strong>
-                                            <span className="user-doc-date">Saved {doc.createdAt?.seconds ? new Date(doc.createdAt.seconds * 1000).toLocaleDateString() : 'Recently'}</span>
+                            <span className="ud-panel__count">{appointments.length}</span>
+                        </div>
+                        <div className="ud-panel__body">
+                            {appointments.length > 0 ? (
+                                <div className="ud-apt-list">
+                                    {appointments.map(apt => (
+                                        <div key={apt.id} className="ud-apt-item">
+                                            <div className="ud-apt-item__left">
+                                                <div className="ud-apt-item__avatar">
+                                                    {apt.lawyerName?.[0] || 'L'}
+                                                </div>
+                                                <div className="ud-apt-item__details">
+                                                    <strong>{apt.lawyerName}</strong>
+                                                    <div className="ud-apt-item__meta">
+                                                        <span><FiCalendar /> {apt.date}</span>
+                                                        <span><FiClock /> {apt.time}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <span className={`ud-status ud-status--${apt.status}`}>{apt.status}</span>
                                         </div>
-                                    </div>
-                                    <button
-                                        className="btn btn-icon"
-                                        onClick={() => navigate(`/documents/${doc.id}/edit`)}
-                                        title="View/Edit"
-                                    >
-                                        <FiArrowRight />
-                                    </button>
+                                    ))}
                                 </div>
-                            ))
-                        ) : (
-                            <div className="empty-state">
-                                <p>No saved documents.</p>
-                                <Link to="/documents" className="btn btn-secondary btn-sm mt-md" style={{ display: 'inline-block' }}>Create a Document</Link>
-                            </div>
-                        )}
-                    </div>
-                </section>
+                            ) : (
+                                <div className="ud-empty">
+                                    <div className="ud-empty__illustration">📅</div>
+                                    <h3>No appointments yet</h3>
+                                    <p>Book a consultation with a qualified attorney to get started.</p>
+                                    <Link to="/search" className="ud-empty__btn">Find a Lawyer</Link>
+                                </div>
+                            )}
+                        </div>
+                    </section>
 
-                <section className="dashboard-section glass-card">
-                    <div className="section-header">
-                        <h2><FiMessageSquare /> Recent Messages</h2>
-                        <Link to="/messages" className="view-all">View All</Link>
-                    </div>
-                    <div className="messages-preview">
-                        <p>Access your real-time chats with lawyers to discuss your cases.</p>
-                        <Link to="/messages" className="btn btn-secondary mt-lg" style={{ width: '100%', display: 'block', textAlign: 'center' }}>Open Messages</Link>
-                    </div>
-                </section>
+                    {/* Documents Panel */}
+                    <section className="ud-panel ud-panel--documents">
+                        <div className="ud-panel__header">
+                            <div className="ud-panel__title-group">
+                                <div className="ud-panel__icon-wrap ud-panel__icon-wrap--purple">
+                                    <FiFileText />
+                                </div>
+                                <h2 className="ud-panel__title">My Documents</h2>
+                            </div>
+                            <Link to="/documents" className="ud-panel__link">Browse Library →</Link>
+                        </div>
+                        <div className="ud-panel__body">
+                            {documents.length > 0 ? (
+                                <div className="ud-doc-list">
+                                    {documents.map(doc => (
+                                        <div key={doc.id} className="ud-doc-item" onClick={() => navigate(`/documents/${doc.id}/edit`)}>
+                                            <div className="ud-doc-item__icon">
+                                                <FiFileText />
+                                            </div>
+                                            <div className="ud-doc-item__info">
+                                                <strong>{doc.templateName}</strong>
+                                                <span>
+                                                    {doc.createdAt?.seconds
+                                                        ? new Date(doc.createdAt.seconds * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                                                        : 'Recently saved'}
+                                                </span>
+                                            </div>
+                                            <FiArrowRight className="ud-doc-item__arrow" />
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="ud-empty">
+                                    <div className="ud-empty__illustration">📄</div>
+                                    <h3>No documents saved</h3>
+                                    <p>Create legal documents from our template library.</p>
+                                    <Link to="/documents" className="ud-empty__btn ud-empty__btn--secondary">Create a Document</Link>
+                                </div>
+                            )}
+                        </div>
+                    </section>
+
+                    {/* Messages Panel */}
+                    <section className="ud-panel ud-panel--messages">
+                        <div className="ud-panel__header">
+                            <div className="ud-panel__title-group">
+                                <div className="ud-panel__icon-wrap ud-panel__icon-wrap--green">
+                                    <FiMessageSquare />
+                                </div>
+                                <h2 className="ud-panel__title">Recent Messages</h2>
+                            </div>
+                            <Link to="/messages" className="ud-panel__link">View All →</Link>
+                        </div>
+                        <div className="ud-panel__body">
+                            <div className="ud-msg-promo">
+                                <div className="ud-msg-promo__visual">💬</div>
+                                <h3>Chat with your lawyers</h3>
+                                <p>Get real-time legal advice through secure messaging.</p>
+                                <Link to="/messages" className="ud-msg-promo__btn">Open Messages</Link>
+                            </div>
+                        </div>
+                    </section>
+
+                </div>
             </div>
         </div>
     );
